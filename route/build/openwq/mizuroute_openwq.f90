@@ -61,6 +61,7 @@ subroutine init_openwq(err, message)
   !enddo
 
   ! intialize openWQ
+  err=openwq_obj%decl()
   !err=openwq_obj%decl(    &
   !  hruCount,             & ! num HRU
   !  nCanopy_2openwq,      & ! num layers of canopy (fixed to 1)
