@@ -81,7 +81,7 @@ int ClassWQ_OpenWQ::decl(
     //    OpenWQ_hostModelconfig_ref->HydroComp.push_back(OpenWQ_hostModelconfig::hydroTuple(aquifer_index_openwq,"SCALARAQUIFER", num_HRU, nYdirec_2openwq, nAquifer_2openwq));      // Aquifer
 
 
-    //    OpenWQ_vars_ref = new OpenWQ_vars(OpenWQ_hostModelconfig_ref->HydroComp.size());
+        OpenWQ_vars_ref = new OpenWQ_vars(OpenWQ_hostModelconfig_ref->HydroComp.size());
 
         // External fluxes
         // Make sure to use capital letters for external fluxes
@@ -94,7 +94,7 @@ int ClassWQ_OpenWQ::decl(
     //    OpenWQ_hostModelconfig_ref->HydroDepend.push_back(OpenWQ_hostModelconfig::hydroTuple(2,"Tsoil_K",   num_HRU,nYdirec_2openwq, nSnow_2openwq + nSoil_2openwq));
 
         // Master Json
-    //    OpenWQ_wqconfig_ref->OpenWQ_masterjson = "openWQ_master.json";
+        OpenWQ_wqconfig_ref->OpenWQ_masterjson = "openWQ_master.json";
 
 
     //    OpenWQ_couplercalls_ref->InitialConfig(
