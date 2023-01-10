@@ -7,7 +7,8 @@ interface
 
     end function
 
-    function openwq_decl_c(openWQ) bind(C, name="openwq_decl")
+    function openwq_decl_c(openWQ, &
+        nRch) bind(C, name="openwq_decl")
     !function openwq_decl_c(      &
     !    openWQ,                 &
     !    num_hru,                &
@@ -23,6 +24,7 @@ interface
         implicit none
         integer(c_int) :: openwq_decl_c ! returns a return value of 0 (success) or -1 (failure)
         type(c_ptr), intent(in), value :: openWQ
+        integer(c_int), intent(in), value  :: nRch
         !integer(c_int), intent(in), value  :: num_hru
         !integer(c_int), intent(in), value  :: nCanopy_2openwq
         !integer(c_int), intent(in), value  :: nSnow_2openwq

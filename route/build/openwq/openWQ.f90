@@ -33,7 +33,9 @@ module openwq
 
     ! supposed to be decl but needed to openWQ_decl in the interface file
     ! returns integer of either a failure(-1) or success(0)
-    integer function openWQ_init(this)                 ! num of layers in y-dir (set to 1 because not used in summa)
+    integer function openWQ_init(   &
+      this,                         &
+      nRch)                
    !integer function openWQ_init( &
    !   this,                      & ! openwq object
    !   num_hru,                   & ! num HRU
@@ -46,6 +48,7 @@ module openwq
       
       implicit none
       class(ClassWQ_OpenWQ) :: this
+      integer(i4b), intent(in) :: nRch
       !integer(i4b), intent(in) :: num_hru
       !integer(i4b), intent(in) :: nCanopy_2openwq
       !integer(i4b), intent(in) :: nSnow_2openwq
@@ -55,7 +58,9 @@ module openwq
       
       !integer(i4b), intent(in) :: nYdirec_2openwq
 
-      openWQ_init = openwq_decl_c(this%ptr)                 ! num of layers in y-dir (set to 1 because not used in summa)
+      openWQ_init = openwq_decl_c(  &
+         this%ptr,                  &
+         nRch)                 ! num of layers in y-dir (set to 1 because not used in summa)
       !openWQ_init = openwq_decl_c(  &
       !   this%ptr,                  & ! openwq object
       !   num_hru,                   & ! num HRU

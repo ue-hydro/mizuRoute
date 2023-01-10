@@ -30,12 +30,13 @@
 #include <vector>
 
 // Global Indexes for Compartments
-  inline int canopy_index_openwq    = 0;
-  inline int snow_index_openwq      = 1;
-  inline int runoff_index_openwq    = 2;
-  inline int soil_index_openwq      = 3;
-  inline int aquifer_index_openwq   = 4;
-  inline int max_snow_layers        = 5;
+  inline int rivernetwork_nRch_openwq = 0;
+  //inline int canopy_index_openwq    = 0;
+  //inline int snow_index_openwq      = 1;
+  //inline int runoff_index_openwq    = 2;
+  //inline int soil_index_openwq      = 3;
+  //inline int aquifer_index_openwq   = 4;
+  //inline int max_snow_layers        = 5;
 
 class ClassWQ_OpenWQ
 {
@@ -58,8 +59,8 @@ class ClassWQ_OpenWQ
         OpenWQ_solver *OpenWQ_solver_ref;
         OpenWQ_output *OpenWQ_output_ref;
 
-        int num_HRU;
-        const float *hru_area;
+        int nRch;
+        //const float *hru_area;
 
     // Constructor
     public:
@@ -68,10 +69,11 @@ class ClassWQ_OpenWQ
     
     // Methods
     void printNum() {
-        std::cout << "num = " << this->num_HRU << std::endl;
+        std::cout << "num = " << this->nRch << std::endl;
     }
 
     int decl(
+        int nRch
         //int num_HRU,                // num HRU
         //int nCanopy_2openwq,      // num layers of canopy (fixed to 1)
         //int nSnow_2openwq,        // num layers of snow (fixed to max of 5 because it varies)

@@ -21,7 +21,8 @@ extern "C" {
 
     // OpenWQ initalization method
     int openwq_decl(
-        ClassWQ_OpenWQ *openWQ 
+        ClassWQ_OpenWQ *openWQ,
+        int nRch
         //int hruCount,               // num HRU
         //int nCanopy_2openwq,      // num layers of canopy (fixed to 1)
         //int nSnow_2openwq,        // num layers of snow (fixed to max of 5 because it varies)

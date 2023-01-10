@@ -16,7 +16,8 @@ void delete_openwq(CLASSWQ_OPENWQ* openWQ) {
 }
 
 int openwq_decl(
-    ClassWQ_OpenWQ *openWQ 
+    ClassWQ_OpenWQ *openWQ,
+    int nRch
     //int hruCount,              // num HRU
     //int nCanopy_2openwq,      // num layers of canopy (fixed to 1)
     //int nSnow_2openwq,        // num layers of snow (fixed to max of 5 because it varies)
@@ -27,6 +28,7 @@ int openwq_decl(
     ){            
 
     return openWQ->decl(
+        nRch
         //hruCount, 
         //nCanopy_2openwq, 
         //nSnow_2openwq, 

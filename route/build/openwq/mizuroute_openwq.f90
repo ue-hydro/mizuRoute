@@ -22,6 +22,7 @@ module mizuroute_openwq
 subroutine init_openwq(err, message)
 
   USE globalData,only:openWQ_obj
+  USE globalData, ONLY: nRch             ! number of reaches in the whoel river network
   !USE globalData,only:gru_struc                               ! gru-hru mapping structures
   !USE globalData,only:prog_meta
   !USE allocspace_module,only:allocGlobal                      ! module to allocate space for global data structures
@@ -61,7 +62,8 @@ subroutine init_openwq(err, message)
   !enddo
 
   ! intialize openWQ
-  err=openwq_obj%decl()
+  err=openwq_obj%decl(    &
+    nRch)
   !err=openwq_obj%decl(    &
   !  hruCount,             & ! num HRU
   !  nCanopy_2openwq,      & ! num layers of canopy (fixed to 1)

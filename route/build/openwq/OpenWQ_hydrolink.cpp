@@ -44,6 +44,7 @@ ClassWQ_OpenWQ::~ClassWQ_OpenWQ() {}
 //}
 
 int ClassWQ_OpenWQ::decl(
+    int nRch
     //int num_HRU,                // num HRU
     //int nCanopy_2openwq,      // num layers of canopy (fixed to 1)
     //int nSnow_2openwq,        // num layers of snow (fixed to max of 5 because it varies)
@@ -67,12 +68,13 @@ int ClassWQ_OpenWQ::decl(
     OpenWQ_output_ref = new OpenWQ_output();
     
     //this->num_HRU = num_HRU;
+    this->nRch = nRch;
 
-    //if (OpenWQ_hostModelconfig_ref->HydroComp.size()==0) {
+    if (OpenWQ_hostModelconfig_ref->HydroComp.size()==0) {
 
         // Compartment names
         // Make sure to use capital letters for compartment names
-    //    OpenWQ_hostModelconfig_ref->HydroComp.push_back(OpenWQ_hostModelconfig::hydroTuple(canopy_index_openwq,"SCALARCANOPYWAT", num_HRU, nYdirec_2openwq, nCanopy_2openwq));      // Canopy
+        OpenWQ_hostModelconfig_ref->HydroComp.push_back(OpenWQ_hostModelconfig::hydroTuple(rivernetwork_nRch_openwq,"RIVER_NETWORK_REACHES", nRch, 1, 1));      // Canopy
     //    OpenWQ_hostModelconfig_ref->HydroComp.push_back(OpenWQ_hostModelconfig::hydroTuple(snow_index_openwq,"ILAYERVOLFRACWAT_SNOW", num_HRU, nYdirec_2openwq, max_snow_layers));  // snow (layerd)
     //    OpenWQ_hostModelconfig_ref->HydroComp.push_back(OpenWQ_hostModelconfig::hydroTuple(runoff_index_openwq,"RUNOFF", num_HRU, nYdirec_2openwq, nRunoff_2openwq));               // Runoff
     //    OpenWQ_hostModelconfig_ref->HydroComp.push_back(OpenWQ_hostModelconfig::hydroTuple(soil_index_openwq,"ILAYERVOLFRACWAT_SOIL", num_HRU, nYdirec_2openwq, nSoil_2openwq));    // Soil (layerd)
@@ -109,7 +111,7 @@ int ClassWQ_OpenWQ::decl(
     //        *OpenWQ_extwatflux_ss_ref,       // sink and source modules)
     //        *OpenWQ_output_ref);
             
-    //}
+    }
     return 0;
 }
 
