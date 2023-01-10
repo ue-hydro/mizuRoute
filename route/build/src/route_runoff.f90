@@ -60,12 +60,6 @@ call init_model(cfile_name, ierr, cmessage)
 if(ierr/=0) call handle_err(ierr, cmessage)
 
 ! *****
-! *** openmp - initiate vars
-call init_openwq(ierr, cmessage)
-if(ierr/=0) call handle_err(ierr, cmessage)
-! ************************
-
-! *****
 ! *** data initialization
 !    - river topology, properties, river network domain decomposition
 !    - runoff data (datetime, domain)
@@ -74,6 +68,12 @@ if(ierr/=0) call handle_err(ierr, cmessage)
 ! ***********************************
 call init_data(ierr, cmessage)
 if(ierr/=0) call handle_err(ierr, cmessage)
+
+! *****
+! *** openmp - initiate vars
+call init_openwq(ierr, cmessage)
+if(ierr/=0) call handle_err(ierr, cmessage)
+! ************************
 
 ! ***********************************
 ! start of time-stepping simulation
