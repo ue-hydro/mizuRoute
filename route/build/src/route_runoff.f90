@@ -22,6 +22,10 @@ USE write_simoutput,     only : output           !
 USE write_restart,       only : main_restart     ! write netcdf restart file
 USE model_finalize,      ONLY : finalize
 USE model_finalize,      ONLY : handle_err
+! OpenWQ coupling 
+USE globalData,         only:openWQ_obj
+USE mizuroute_openWQ,   only:init_openwq
+USE, intrinsic :: iso_c_binding
 
 implicit none
 
@@ -53,6 +57,10 @@ call system_clock(count_rate=cr)
 !    - broadcast to all processors
 ! ************************
 call init_model(cfile_name, ierr, cmessage)
+if(ierr/=0) call handle_err(ierr, cmessage)
+
+! OpenWQ
+call init_openwq(ierr, cmessage)
 if(ierr/=0) call handle_err(ierr, cmessage)
 
 ! *****
