@@ -59,9 +59,11 @@ call system_clock(count_rate=cr)
 call init_model(cfile_name, ierr, cmessage)
 if(ierr/=0) call handle_err(ierr, cmessage)
 
-! OpenWQ
+! *****
+! *** openmp - initiate vars
 call init_openwq(ierr, cmessage)
 if(ierr/=0) call handle_err(ierr, cmessage)
+! ************************
 
 ! *****
 ! *** data initialization
