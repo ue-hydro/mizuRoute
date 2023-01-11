@@ -35,8 +35,9 @@ interface
 
     end function
 
-    function openwq_run_time_start_c(&
-        openWQ) bind(C, name="openwq_run_time_start")
+    function openwq_run_time_start_c(   &
+        openWQ,                         &
+        simtime_mizuroute) bind(C, name="openwq_run_time_start")
     !function openwq_run_time_start_c(&
     !    openWQ,                             &
     !    last_hru_flag,                      &
@@ -60,7 +61,7 @@ interface
     !    integer(c_int), intent(in), value    :: hru_index
     !    integer(c_int), intent(in), value    :: nSnow_2openwq
     !    integer(c_int), intent(in), value    :: nSoil_2openwq
-    !    integer(c_int), intent(in)           :: simtime_summa(5)
+         integer(c_int), intent(in)           :: simtime_mizuroute(6)
     !    real(c_double), intent(in)           :: soilMoist_depVar_summa_frac(nSoil_2openwq)
     !    real(c_double), intent(in)           :: soilTemp_depVar_summa_K(nSoil_2openwq)
     !    real(c_double), intent(in), value    :: airTemp_depVar_summa_K
@@ -79,7 +80,7 @@ interface
         implicit none
         integer(c_int) :: openwq_run_time_end_c ! returns 0 (success) or -1 (failure)
         type(c_ptr),    intent(in), value   :: openWQ
-        integer(c_int), intent(in)          :: simtime(5)
+        integer(c_int), intent(in)          :: simtime(6)
 
     end function
 

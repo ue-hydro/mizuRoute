@@ -74,7 +74,8 @@ module openwq
     end function
 
     integer function openwq_run_time_start(   &
-      this)
+      this,                                   &
+      simtime)
     !integer function openwq_run_time_start(   &
     !  this,                                  &
     !  last_hru_flag,                         &
@@ -96,7 +97,7 @@ module openwq
      ! integer(i4b), intent(in)   :: hru_index
      ! integer(i4b), intent(in)   :: nSnow_2openwq
      ! integer(i4b), intent(in)   :: nSoil_2openwq
-     ! integer(i4b), intent(in)   :: simtime(5) ! 5 is the number of timevars
+      integer(i4b), intent(in)   :: simtime(6) ! 5 is the number of timevars
      ! real(rkind),  intent(in)   :: airTemp_depVar_summa_K
      ! real(rkind),  intent(in)   :: soilTemp_depVar_summa_K(nSoil_2openwq)
      ! real(rkind),  intent(in)   :: soilMoist_depVar_summa_frac(nSoil_2openwq)
@@ -105,8 +106,9 @@ module openwq
      ! real(rkind),  intent(in)   :: soilWatVol_stateVar_summa_m3(nSoil_2openwq)
      ! real(rkind),  intent(in)   :: aquiferWatVol_stateVar_summa_m3
 
-      openwq_run_time_start = openwq_run_time_start_c( &
-         this%ptr)
+      openwq_run_time_start = openwq_run_time_start_c(   &
+         this%ptr,                                       &
+         simtime)
       !openwq_run_time_start = openwq_run_time_start_c( &
       !   this%ptr,                              & 
       !   last_hru_flag,                         &
@@ -130,7 +132,7 @@ module openwq
 
       implicit none
       class(CLASSWQ_openwq)      :: this
-      integer(i4b), intent(in)   :: simtime(5) ! 5 is the number of timevars
+      integer(i4b), intent(in)   :: simtime(6) ! 5 is the number of timevars
 
       openwq_run_time_end = openwq_run_time_end_c( &
          this%ptr,                                 &

@@ -41,12 +41,12 @@ int openwq_decl(
 }
 
 int openwq_run_time_start(
-    CLASSWQ_openwq *openWQ
+    CLASSWQ_openwq *openWQ,
 //    bool last_hru_flag, 
 //    int hru_index, 
 //    int nSnow_2openwq, 
 //    int nSoil_2openwq, 
-//    int simtime_summa[], 
+      int simtime_mizuroute[] 
 //    double soilMoist_depVar_summa_frac[],                  
 //    double soilTemp_depVar_summa_K[],
 //    double airTemp_depVar_summa_K,
@@ -61,7 +61,7 @@ int openwq_run_time_start(
 //        hru_index, 
 //        nSnow_2openwq, 
 //        nSoil_2openwq, 
-//        simtime_summa, 
+          simtime_mizuroute 
 //        soilMoist_depVar_summa_frac,                  
 //        soilTemp_depVar_summa_K,
 //        airTemp_depVar_summa_K,
@@ -74,8 +74,8 @@ int openwq_run_time_start(
 
 int openwq_run_time_end(
     CLASSWQ_openwq *openWQ, 
-    int simtime_summa[]) {
+    int simtime_mizuroute[]) {
 
     return openWQ->openwq_run_time_end(
-        simtime_summa);
+        simtime_mizuroute);
 }

@@ -92,9 +92,10 @@ subroutine openwq_run_time_start(  &
   !USE var_lookup, only: iLookPROG  ! named variables for state variables
   !USE var_lookup, only: iLookTIME  ! named variables for time data structure
   !USE var_lookup, only: iLookATTR  ! named variables for real valued attribute data structure
-  !USE multiconst,only:&
+  !USE multiconst, only:&
   !                      iden_ice,       & ! intrinsic density of ice             (kg m-3)
   !                      iden_water        ! intrinsic density of liquid water    (kg m-3)
+  USE globalData,        ONLY: modTime        ! previous and current model time
 
   implicit none
 
@@ -110,7 +111,7 @@ subroutine openwq_run_time_start(  &
   !integer(i4b)                        :: iVar
   !integer(i4b)                        :: iDat
   !integer(i4b)                        :: openWQArrayIndex
-  !integer(i4b)                        :: simtime(5) ! 5 time values yy-mm-dd-hh-min
+  integer(i4b)                        :: simtime(6) ! 5 time values yy-mm-dd-hh-min
   !real(rkind)                         :: airTemp_depVar_summa_K
   !real(rkind)                         :: canopyWatVol_stateVar_summa_m3
   !real(rkind)                         :: aquiferWatVol_stateVar_summa_m3
@@ -244,14 +245,16 @@ subroutine openwq_run_time_start(  &
   !      end do
 
         
-          ! add the time values to the array
-  !      simtime(1) = timeStruct%var(iLookTIME%iyyy)  ! Year
-  !      simtime(2) = timeStruct%var(iLookTIME%im)    ! month
-  !      simtime(3) = timeStruct%var(iLookTIME%id)    ! hour
-  !      simtime(4) = timeStruct%var(iLookTIME%ih)    ! day
-  !      simtime(5) = timeStruct%var(iLookTIME%imin)  ! minute
+        ! add the time values to the array
+        simtime(1) = modTime(1)%year()
+        simtime(2) = modTime(1)%month()
+        simtime(3) = modTime(1)%day()
+        simtime(4) = modTime(1)%hour()
+        simtime(5) = modTime(1)%minute()
+        simtime(6) = modTime(1)%sec()
   
-        err=openwq_obj%openwq_run_time_start()
+        err=openwq_obj%openwq_run_time_start(         &
+          simtime)
   !      err=openwq_obj%openwq_run_time_start(&
   !            last_hru_flag,                          & 
   !            openWQArrayIndex,                       & ! total HRUs
@@ -289,6 +292,8 @@ subroutine openwq_run_time_end( &
   
 !  USE var_lookup, only: iLookTIME  ! named variables for time data structure
 
+  USE globalData,        ONLY: modTime        ! previous and current model time
+
   implicit none
 
   ! Dummy Varialbes
@@ -296,19 +301,19 @@ subroutine openwq_run_time_end( &
 !  type(summa1_type_dec), intent(in)  :: summa1_struc
 
   ! Local Variables
-  integer(i4b)                       :: simtime(5) ! 5 time values yy-mm-dd-hh-min
+  integer(i4b)                       :: simtime(6) ! 5 time values yy-mm-dd-hh-min
   integer(i4b)                       :: err ! error control
 
 !  summaVars: associate(&
 !      timeStruct     => summa1_struc%timeStruct       &       
 !  )
 
-  simtime = [1950, 1, 1, 12, 0]
-  !simtime(1) = timeStruct%var(iLookTIME%iyyy)  ! Year
-  !simtime(2) = timeStruct%var(iLookTIME%im)    ! month
-  !simtime(3) = timeStruct%var(iLookTIME%id)    ! hour
-  !simtime(4) = timeStruct%var(iLookTIME%ih)    ! day
-  !simtime(5) = timeStruct%var(iLookTIME%imin)  ! minute
+  simtime(1) = modTime(1)%year()
+  simtime(2) = modTime(1)%month()
+  simtime(3) = modTime(1)%day()
+  simtime(4) = modTime(1)%hour()
+  simtime(5) = modTime(1)%minute()
+  simtime(6) = modTime(1)%sec()
 
   err=openwq_obj%openwq_run_time_end(simtime)           ! minute
 

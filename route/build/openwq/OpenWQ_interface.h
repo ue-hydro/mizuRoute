@@ -33,12 +33,12 @@ extern "C" {
         );           // num of layers in y-dir (set to 1 because not used in summa)
 
     int openwq_run_time_start(
-        CLASSWQ_openwq *openWQ
+        CLASSWQ_openwq *openWQ,
         //bool last_hru_flag, 
         //int index_hru, 
         //int nSnow_2openwq, 
         //int nSoil_2openwq,
-        //int simtime_summa[], 
+        int simtime_mizuroute[] 
         //double soilMoist_depVar[], 
         //double soilTemp_K_depVar[], 
         //double airTemp_K_depVar, 
@@ -50,7 +50,7 @@ extern "C" {
 
     int openwq_run_time_end(
         CLASSWQ_openwq *openWQ, 
-        int simtime_summa[]);
+        int simtime_mizuroute[]);
 
     #ifdef __cplusplus
 }

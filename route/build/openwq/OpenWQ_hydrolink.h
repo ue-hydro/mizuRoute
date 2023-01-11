@@ -88,7 +88,7 @@ class CLASSWQ_openwq
         //int hru_index, 
         //int nSnow_2openwq, 
         //int nSoil_2openwq, 
-        //int simtime_summa[],
+        int simtime_mizuroute[]
         //double soilMoist_depVar_summa_frac[],                  
         //double soilTemp_depVar_summa_K[],
         //double airTemp_depVar_summa_K,

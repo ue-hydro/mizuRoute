@@ -24,25 +24,6 @@ CLASSWQ_openwq::CLASSWQ_openwq() {}
 // Deconstructor
 CLASSWQ_openwq::~CLASSWQ_openwq() {}
 
-//time_t CLASSWQ_openwq::convert_time(
-//    int year, 
-//    int month, 
-//    int day, 
-//    int hour, 
-//    int minute) {
-
-//    std::time_t sim_time;
-//    std::tm tm{};
-//    tm.tm_year = year - 1900; // -1900 is needed to get the conversion to produce the correct output
-//    tm.tm_mon = month - 1;
-//    tm.tm_hour = hour;
-//    tm.tm_mday = day;
-//    tm.tm_min = minute;
-//    sim_time = timegm(&tm);
-
-//    return sim_time;
-//}
-
 int CLASSWQ_openwq::decl(
     int nRch
     //int num_HRU,                // num HRU
@@ -120,7 +101,7 @@ int CLASSWQ_openwq::openwq_run_time_start(
     //int index_hru, 
     //int nSnow_2openwq, 
     //int nSoil_2openwq,
-    //int simtime_summa[],
+    int simtime_mizuroute[]
     //double soilMoist_depVar_summa_frac[],                  
     //double soilTemp_depVar_summa_K[],
     //double airTemp_depVar_summa_K,
@@ -130,12 +111,13 @@ int CLASSWQ_openwq::openwq_run_time_start(
     //double aquiferWatVol_stateVar_summa_m3
     ) {
     
-    time_t simtime = OpenWQ_units_ref->convert_time(1950, 12, 31, 12, 0, 0);
-    //time_t simtime = convert_time(simtime_summa[0], 
-    //    simtime_summa[1], 
-    //    simtime_summa[2], 
-    //    simtime_summa[3], 
-    //    simtime_summa[4]);
+    time_t simtime = OpenWQ_units_ref->convert_time(
+        simtime_mizuroute[0], 
+        simtime_mizuroute[1], 
+        simtime_mizuroute[2], 
+        simtime_mizuroute[3], 
+        simtime_mizuroute[4],
+        simtime_mizuroute[5]);
     
     //int runoff_vol = 0;
     
