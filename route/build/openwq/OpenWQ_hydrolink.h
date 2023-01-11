@@ -98,5 +98,8 @@ class CLASSWQ_openwq
         //double aquiferWatVol_stateVar_summa_m3
         );
 
+    int openwq_run_time_end(
+        int simtime_summa[]);
+
 };
 #endif

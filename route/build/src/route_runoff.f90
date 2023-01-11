@@ -23,9 +23,10 @@ USE write_restart,       only : main_restart     ! write netcdf restart file
 USE model_finalize,      ONLY : finalize
 USE model_finalize,      ONLY : handle_err
 ! OpenWQ coupling 
-USE globalData,         only:openwq_obj
-USE mizuroute_openwq,   only:openwq_init
-USE mizuroute_openwq,   only:openwq_run_time_start
+USE globalData,         ONLY : openwq_obj
+USE mizuroute_openwq,   ONLY : openwq_init
+USE mizuroute_openwq,   ONLY : openwq_run_time_start
+USE mizuroute_openwq,   ONLY : openwq_run_time_end
 USE, intrinsic :: iso_c_binding
 
 implicit none
@@ -107,6 +108,9 @@ call system_clock(startTime)
 call system_clock(endTime)
 elapsedTime = real(endTime-startTime, kind(dp))/real(cr)
 write(*,"(A,1PG15.7,A)") '   elapsed-time [output] = ', elapsedTime, ' s'
+
+! openwq: call run_time_start function
+call openwq_run_time_end(openwq_obj)
 
   call main_restart(ierr, cmessage)
   if(ierr/=0) call handle_err(ierr, cmessage)

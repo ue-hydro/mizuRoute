@@ -184,3 +184,34 @@ int CLASSWQ_openwq::openwq_run_time_start(
 }
 
 
+int CLASSWQ_openwq::openwq_run_time_end(
+    int simtime_mizuroute[]) {
+    
+    time_t simtime = OpenWQ_units_ref->convert_time(
+        simtime_mizuroute[0], 
+        simtime_mizuroute[1], 
+        simtime_mizuroute[2], 
+        simtime_mizuroute[3], 
+        simtime_mizuroute[4],
+        0);
+
+
+    OpenWQ_couplercalls_ref->RunTimeLoopEnd(
+        *OpenWQ_hostModelconfig_ref,
+        *OpenWQ_json_ref,
+        *OpenWQ_wqconfig_ref,            // create OpenWQ_wqconfig object
+        *OpenWQ_units_ref,               // functions for unit conversion
+        *OpenWQ_utils_ref,                // utility methods/functions
+        *OpenWQ_readjson_ref,            // read json files
+        *OpenWQ_vars_ref,
+        *OpenWQ_initiate_ref,            // initiate modules
+        *OpenWQ_watertransp_ref,         // transport modules
+        *OpenWQ_chem_ref,                // biochemistry modules
+        *OpenWQ_extwatflux_ss_ref,          // sink and source modules)
+        *OpenWQ_solver_ref,
+        *OpenWQ_output_ref,
+        simtime);
+
+    return 0;
+}
+

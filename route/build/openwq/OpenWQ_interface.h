@@ -48,6 +48,10 @@ extern "C" {
         //double aquiferStorage
         );
 
+    int openwq_run_time_end(
+        CLASSWQ_openwq *openWQ, 
+        int simtime_summa[]);
+
     #ifdef __cplusplus
 }
 #endif

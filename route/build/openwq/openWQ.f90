@@ -17,7 +17,7 @@ module openwq
     procedure :: openwq_run_time_start => openwq_run_time_start
     !procedure :: openwq_run_space => openwq_run_space
     !procedure :: openwq_run_space_in => openwq_run_space_in
-    !procedure :: openwq_run_time_end => openwq_run_time_end
+    procedure :: openwq_run_time_end => openwq_run_time_end
 
  end type
 
@@ -123,5 +123,21 @@ module openwq
       !   aquiferWatVol_stateVar_summa_m3)
    
    end function
+
+   integer function openwq_run_time_end(  &
+      this,                               &
+      simtime)
+
+      implicit none
+      class(CLASSWQ_openwq)      :: this
+      integer(i4b), intent(in)   :: simtime(5) ! 5 is the number of timevars
+
+      openwq_run_time_end = openwq_run_time_end_c( &
+         this%ptr,                                 &
+         simtime)
+
+   end function
+
+
 
 end module openwq

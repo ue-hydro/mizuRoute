@@ -10,15 +10,16 @@ module mizuroute_openwq
   public :: openwq_run_time_start
   !public :: openwq_run_time_start_go
   !public :: openwq_run_space_step
-  !public :: openwq_run_time_end
+  public :: openwq_run_time_end
 
   ! Global Data for prognostic Variables of HRUs
   !type(gru_hru_doubleVec),save,public   :: progStruct_timestep_start ! copy of progStruct at the start of timestep for passing fluxes
 
   contains
 
-  ! Subroutine to initalize the openWQ object
-  ! putting it here to keep the SUMMA_Driver clean
+! ####################
+! OpenWQ: openwq init
+! ####################
 subroutine openwq_init(err, message)
 
   USE globalData, ONLY:openwq_obj
@@ -79,6 +80,10 @@ subroutine openwq_init(err, message)
 
 end subroutine openwq_init
 
+
+! ####################
+! OpenWQ: run_time_start
+! ####################
 subroutine openwq_run_time_start(  &
   openwq_obj)
 
@@ -270,5 +275,44 @@ subroutine openwq_run_time_start(  &
   !end associate summaVars
 
 end subroutine openwq_run_time_start
+
+! ####################
+! OpenWQ: run_time_end
+! ####################
+subroutine openwq_run_time_end( &
+  openwq_obj)
+!subroutine openwq_run_time_end( &
+!  openwq_obj, &
+!  summa1_struc)
+
+!  USE summa_type, only:summa1_type_dec            ! master summa data type
+  
+!  USE var_lookup, only: iLookTIME  ! named variables for time data structure
+
+  implicit none
+
+  ! Dummy Varialbes
+  class(CLASSWQ_openwq), intent(in)  :: openwq_obj
+!  type(summa1_type_dec), intent(in)  :: summa1_struc
+
+  ! Local Variables
+  integer(i4b)                       :: simtime(5) ! 5 time values yy-mm-dd-hh-min
+  integer(i4b)                       :: err ! error control
+
+!  summaVars: associate(&
+!      timeStruct     => summa1_struc%timeStruct       &       
+!  )
+
+  simtime = [1950, 1, 1, 12, 0]
+  !simtime(1) = timeStruct%var(iLookTIME%iyyy)  ! Year
+  !simtime(2) = timeStruct%var(iLookTIME%im)    ! month
+  !simtime(3) = timeStruct%var(iLookTIME%id)    ! hour
+  !simtime(4) = timeStruct%var(iLookTIME%ih)    ! day
+  !simtime(5) = timeStruct%var(iLookTIME%imin)  ! minute
+
+  err=openwq_obj%openwq_run_time_end(simtime)           ! minute
+
+  !end associate summaVars
+end subroutine
 
 end module mizuroute_openwq

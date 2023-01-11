@@ -69,7 +69,13 @@ int openwq_run_time_start(
 //        canopyWatVol_stateVar_summa_m3,
 //        soilWatVol_stateVar_summa_m3,
 //        aquiferWatVol_stateVar_summa_m3
-);
+    );   
 }
 
+int openwq_run_time_end(
+    CLASSWQ_openwq *openWQ, 
+    int simtime_summa[]) {
 
+    return openWQ->openwq_run_time_end(
+        simtime_summa);
+}

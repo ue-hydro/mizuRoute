@@ -71,5 +71,17 @@ interface
 
     end function
 
+    function openwq_run_time_end_c( &
+        openWQ, &
+        simtime) bind(C, name="openwq_run_time_end")
+
+        USE iso_c_binding
+        implicit none
+        integer(c_int) :: openwq_run_time_end_c ! returns 0 (success) or -1 (failure)
+        type(c_ptr),    intent(in), value   :: openWQ
+        integer(c_int), intent(in)          :: simtime(5)
+
+    end function
+
 
 end interface
