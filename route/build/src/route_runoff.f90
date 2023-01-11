@@ -24,7 +24,7 @@ USE model_finalize,      ONLY : finalize
 USE model_finalize,      ONLY : handle_err
 ! OpenWQ coupling 
 USE globalData,         only:openWQ_obj
-USE mizuroute_openWQ,   only:init_openwq
+USE mizuroute_openWQ,   only:openwq_init
 USE, intrinsic :: iso_c_binding
 
 implicit none
@@ -71,7 +71,7 @@ if(ierr/=0) call handle_err(ierr, cmessage)
 
 ! *****
 ! *** openmp - initiate vars
-call init_openwq(ierr, cmessage)
+call openwq_init(ierr, cmessage)
 if(ierr/=0) call handle_err(ierr, cmessage)
 ! ************************
 

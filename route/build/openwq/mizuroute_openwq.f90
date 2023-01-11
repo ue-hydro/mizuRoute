@@ -6,7 +6,7 @@ module mizuroute_openwq
   implicit none
   private
   ! Subroutines
-  public :: init_openwq
+  public :: openwq_init
   !public :: run_time_start
   !public :: run_time_start_go
   !public :: run_space_step
@@ -19,7 +19,7 @@ module mizuroute_openwq
 
   ! Subroutine to initalize the openWQ object
   ! putting it here to keep the SUMMA_Driver clean
-subroutine init_openwq(err, message)
+subroutine openwq_init(err, message)
 
   USE globalData,only:openWQ_obj
   USE globalData, ONLY: nRch             ! number of reaches in the whoel river network
@@ -77,6 +77,6 @@ subroutine init_openwq(err, message)
   ! the previous time_steps volume
   !call allocGlobal(prog_meta, progStruct_timestep_start, err, message) 
 
-end subroutine init_openwq
+end subroutine openwq_init
 
 end module mizuroute_openwq
