@@ -97,19 +97,19 @@ int ClassWQ_OpenWQ::decl(
         OpenWQ_wqconfig_ref->OpenWQ_masterjson = "openWQ_master.json";
 
 
-    //    OpenWQ_couplercalls_ref->InitialConfig(
-    //        *OpenWQ_hostModelconfig_ref,
-    //        *OpenWQ_json_ref,                // create OpenWQ_json object
-    //        *OpenWQ_wqconfig_ref,            // create OpenWQ_wqconfig object
-    //        *OpenWQ_units_ref,               // functions for unit conversion
-    //        *OpenWQ_utils_ref,                // utility methods/functions
-    //        *OpenWQ_readjson_ref,            // read json files
-    //        *OpenWQ_vars_ref,
-    //        *OpenWQ_initiate_ref,            // initiate modules
-    //        *OpenWQ_watertransp_ref,         // transport modules
-    //        *OpenWQ_chem_ref,                // biochemistry modules
-    //        *OpenWQ_extwatflux_ss_ref,       // sink and source modules)
-    //        *OpenWQ_output_ref);
+        OpenWQ_couplercalls_ref->InitialConfig(
+            *OpenWQ_hostModelconfig_ref,
+            *OpenWQ_json_ref,                // create OpenWQ_json object
+            *OpenWQ_wqconfig_ref,            // create OpenWQ_wqconfig object
+            *OpenWQ_units_ref,               // functions for unit conversion
+            *OpenWQ_utils_ref,                // utility methods/functions
+            *OpenWQ_readjson_ref,            // read json files
+            *OpenWQ_vars_ref,
+            *OpenWQ_initiate_ref,            // initiate modules
+            *OpenWQ_watertransp_ref,         // transport modules
+            *OpenWQ_chem_ref,                // biochemistry modules
+            *OpenWQ_extwatflux_ss_ref,       // sink and source modules)
+            *OpenWQ_output_ref);
             
     }
     return 0;
