@@ -7,16 +7,16 @@
  * can be called. The openWQ object methods are defined above.
  */
 // Interface functions to create Object
-CLASSWQ_OPENWQ* create_openwq() {
-    return new ClassWQ_OpenWQ();
+CLASSWQ_openwq* create_openwq() {
+    return new CLASSWQ_openwq();
 }
 
-void delete_openwq(CLASSWQ_OPENWQ* openWQ) {
+void delete_openwq(CLASSWQ_openwq* openWQ) {
     delete openWQ;
 }
 
 int openwq_decl(
-    ClassWQ_OpenWQ *openWQ,
+    CLASSWQ_openwq *openWQ,
     int nRch
     //int hruCount,              // num HRU
     //int nCanopy_2openwq,      // num layers of canopy (fixed to 1)
@@ -39,4 +39,37 @@ int openwq_decl(
         );
 
 }
+
+int openwq_run_time_start(
+    CLASSWQ_openwq *openWQ
+//    bool last_hru_flag, 
+//    int hru_index, 
+//    int nSnow_2openwq, 
+//    int nSoil_2openwq, 
+//    int simtime_summa[], 
+//    double soilMoist_depVar_summa_frac[],                  
+//    double soilTemp_depVar_summa_K[],
+//    double airTemp_depVar_summa_K,
+//    double sweWatVol_stateVar_summa_m3[],
+//    double canopyWatVol_stateVar_summa_m3,
+//    double soilWatVol_stateVar_summa_m3[],
+//    double aquiferWatVol_stateVar_summa_m3
+) {
+    
+    return openWQ->openwq_run_time_start(
+//        last_hru_flag,
+//        hru_index, 
+//        nSnow_2openwq, 
+//        nSoil_2openwq, 
+//        simtime_summa, 
+//        soilMoist_depVar_summa_frac,                  
+//        soilTemp_depVar_summa_K,
+//        airTemp_depVar_summa_K,
+//        sweWatVol_stateVar_summa_m3,
+//        canopyWatVol_stateVar_summa_m3,
+//        soilWatVol_stateVar_summa_m3,
+//        aquiferWatVol_stateVar_summa_m3
+);
+}
+
 

@@ -38,7 +38,7 @@
   //inline int aquifer_index_openwq   = 4;
   //inline int max_snow_layers        = 5;
 
-class ClassWQ_OpenWQ
+class CLASSWQ_openwq
 {
 
     // Instance Variables
@@ -64,8 +64,8 @@ class ClassWQ_OpenWQ
 
     // Constructor
     public:
-        ClassWQ_OpenWQ();
-        ~ClassWQ_OpenWQ();
+        CLASSWQ_openwq();
+        ~CLASSWQ_openwq();
     
     // Methods
     void printNum() {
@@ -83,12 +83,20 @@ class ClassWQ_OpenWQ
         //int nYdirec_2openwq
         );           // num of layers in y-dir (set to 1 because not used in summa)
 
-    //time_t convert_time(
-    //    int year, 
-    //    int month, 
-    //    int day, 
-    //    int hour, 
-    //    int minute);
+    int openwq_run_time_start(
+        //bool last_hru_flag,
+        //int hru_index, 
+        //int nSnow_2openwq, 
+        //int nSoil_2openwq, 
+        //int simtime_summa[],
+        //double soilMoist_depVar_summa_frac[],                  
+        //double soilTemp_depVar_summa_K[],
+        //double airTemp_depVar_summa_K,
+        //double sweWatVol_stateVar_summa_m3[],
+        //double canopyWatVol_stateVar_summa_m3,
+        //double soilWatVol_stateVar_summa_m3[],
+        //double aquiferWatVol_stateVar_summa_m3
+        );
 
 };
 #endif

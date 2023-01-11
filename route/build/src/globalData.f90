@@ -166,6 +166,6 @@ MODULE globalData
   type(cMolecule)                , public :: nMolecule                ! number of computational molecule (used for KW, MC, DW)
 
   ! openwq variable
-  type(ClassWQ_OpenWQ),save,public            :: openWQ_obj
+  type(ClassWQ_OpenWQ),save,public            :: openwq_obj
 
 end module globalData

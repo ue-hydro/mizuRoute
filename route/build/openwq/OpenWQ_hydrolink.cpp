@@ -15,16 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "OpenWQ_hydrolink.h"
 #include "OpenWQ_interface.h"
-
+#include "OpenWQ_units.h"
 
 // Constructor
 // initalize numHRUs value
-ClassWQ_OpenWQ::ClassWQ_OpenWQ() {}
+CLASSWQ_openwq::CLASSWQ_openwq() {}
 
 // Deconstructor
-ClassWQ_OpenWQ::~ClassWQ_OpenWQ() {}
+CLASSWQ_openwq::~CLASSWQ_openwq() {}
 
-//time_t ClassWQ_OpenWQ::convert_time(
+//time_t CLASSWQ_openwq::convert_time(
 //    int year, 
 //    int month, 
 //    int day, 
@@ -43,7 +43,7 @@ ClassWQ_OpenWQ::~ClassWQ_OpenWQ() {}
 //    return sim_time;
 //}
 
-int ClassWQ_OpenWQ::decl(
+int CLASSWQ_openwq::decl(
     int nRch
     //int num_HRU,                // num HRU
     //int nCanopy_2openwq,      // num layers of canopy (fixed to 1)
@@ -112,6 +112,74 @@ int ClassWQ_OpenWQ::decl(
             *OpenWQ_output_ref);
             
     }
+    return 0;
+}
+
+int CLASSWQ_openwq::openwq_run_time_start(
+    //bool last_hru_flag,
+    //int index_hru, 
+    //int nSnow_2openwq, 
+    //int nSoil_2openwq,
+    //int simtime_summa[],
+    //double soilMoist_depVar_summa_frac[],                  
+    //double soilTemp_depVar_summa_K[],
+    //double airTemp_depVar_summa_K,
+    //double sweWatVol_stateVar_summa_m3[],
+    //double canopyWatVol_stateVar_summa_m3,
+    //double soilWatVol_stateVar_summa_m3[],
+    //double aquiferWatVol_stateVar_summa_m3
+    ) {
+    
+    time_t simtime = OpenWQ_units_ref->convert_time(1950, 12, 31, 12, 0, 0);
+    //time_t simtime = convert_time(simtime_summa[0], 
+    //    simtime_summa[1], 
+    //    simtime_summa[2], 
+    //    simtime_summa[3], 
+    //    simtime_summa[4]);
+    
+    //int runoff_vol = 0;
+    
+    // Updating Chemistry dependencies and volumes (out of order because of looping)
+
+    // Air Temp is only one layer - NEED TO DOUBLE CHECK
+    //(*OpenWQ_hostModelconfig_ref->dependVar)[1](index_hru,0,0) = airTemp_depVar_summa_K;
+    //(*OpenWQ_hostModelconfig_ref->waterVol_hydromodel)[canopy_index_openwq](index_hru,0,0) = canopyWatVol_stateVar_summa_m3;                   // canopy
+    //(*OpenWQ_hostModelconfig_ref->waterVol_hydromodel)[runoff_index_openwq](index_hru,0,0) = runoff_vol;                  // runoff
+    //(*OpenWQ_hostModelconfig_ref->waterVol_hydromodel)[aquifer_index_openwq](index_hru,0,0) = aquiferWatVol_stateVar_summa_m3;              // aquifer
+
+    // update Vars that rely on Snow
+    //for (int z = 0; z < nSnow_2openwq; z++) {
+    //    (*OpenWQ_hostModelconfig_ref->waterVol_hydromodel)[snow_index_openwq](index_hru,0,z) = sweWatVol_stateVar_summa_m3[z];   // snow
+    //}
+    
+    // Update Vars that rely on Soil
+    //for (int z = 0; z < nSoil_2openwq; z++) {
+    //    (*OpenWQ_hostModelconfig_ref->dependVar)[0](index_hru,0,z) = soilMoist_depVar_summa_frac[z]; 
+    //    (*OpenWQ_hostModelconfig_ref->dependVar)[2](index_hru,0,z) = soilTemp_depVar_summa_K[z];
+    //    (*OpenWQ_hostModelconfig_ref->waterVol_hydromodel)[soil_index_openwq](index_hru,0,z) = soilWatVol_stateVar_summa_m3[z];      // soil
+    //}
+
+
+    // *OpenWQ_hostModelconfig_ref.time_step = 5;
+
+    //if (last_hru_flag) {
+        OpenWQ_couplercalls_ref->RunTimeLoopStart(
+            *OpenWQ_hostModelconfig_ref,
+            *OpenWQ_json_ref,
+            *OpenWQ_wqconfig_ref,            // create OpenWQ_wqconfig object
+            *OpenWQ_units_ref,               // functions for unit conversion
+            *OpenWQ_utils_ref,                // utility methods/functions
+            *OpenWQ_readjson_ref,            // read json files
+            *OpenWQ_vars_ref,
+            *OpenWQ_initiate_ref,            // initiate modules
+            *OpenWQ_watertransp_ref,         // transport modules
+            *OpenWQ_chem_ref,                // biochemistry modules
+            *OpenWQ_extwatflux_ss_ref,          // sink and source modules)
+            *OpenWQ_solver_ref,
+            *OpenWQ_output_ref,
+            simtime);
+    //}
+
     return 0;
 }
 

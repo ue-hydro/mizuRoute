@@ -23,8 +23,9 @@ USE write_restart,       only : main_restart     ! write netcdf restart file
 USE model_finalize,      ONLY : finalize
 USE model_finalize,      ONLY : handle_err
 ! OpenWQ coupling 
-USE globalData,         only:openWQ_obj
-USE mizuroute_openWQ,   only:openwq_init
+USE globalData,         only:openwq_obj
+USE mizuroute_openwq,   only:openwq_init
+USE mizuroute_openwq,   only:openwq_run_time_start
 USE, intrinsic :: iso_c_binding
 
 implicit none
@@ -82,6 +83,9 @@ do while (.not.finished)
 
   call prep_output(ierr, cmessage)
   if(ierr/=0) call handle_err(ierr, cmessage)
+
+  ! openwq: call run_time_start function
+  call openwq_run_time_start(openwq_obj)
 
 call system_clock(startTime)
   call get_hru_runoff(ierr, cmessage)
