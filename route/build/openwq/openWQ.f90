@@ -15,7 +15,7 @@ module openwq
    !  procedure :: get_num => openWQ_get_num
     procedure :: decl => openWQ_init
     procedure :: openwq_run_time_start => openwq_run_time_start
-    !procedure :: openwq_run_space => openwq_run_space
+    procedure :: openwq_run_space => openwq_run_space
     !procedure :: openwq_run_space_in => openwq_run_space_in
     procedure :: openwq_run_time_end => openwq_run_time_end
 
@@ -123,6 +123,36 @@ module openwq
       !   canopyWatVol_stateVar_summa_m3,        &
       !   soilWatVol_stateVar_summa_m3,          &
       !   aquiferWatVol_stateVar_summa_m3)
+   
+   end function
+
+   integer function openwq_run_space(  &
+      this,                            &
+      simtime,                         &
+      source,ix_s,iy_s,iz_s,           &
+      recipient,ix_r,iy_r,iz_r,        &
+      wflux_s2r,wmass_source)
+
+      implicit none
+      class(CLASSWQ_openwq)      :: this
+      integer(i4b), intent(in)   :: simtime(6) ! 5 is the number of timevars
+      integer(i4b), intent(in)   :: source
+      integer(i4b), intent(in)   :: ix_s
+      integer(i4b), intent(in)   :: iy_s
+      integer(i4b), intent(in)   :: iz_s
+      integer(i4b), intent(in)   :: recipient
+      integer(i4b), intent(in)   :: ix_r
+      integer(i4b), intent(in)   :: iy_r
+      integer(i4b), intent(in)   :: iz_r
+      real(dp),  intent(in)   :: wflux_s2r
+      real(dp),  intent(in)   :: wmass_source
+
+      openwq_run_space = openwq_run_space_c( &
+         this%ptr,                           &
+         simtime,                            &
+         source,ix_s,iy_s,iz_s,              &
+         recipient,ix_r,iy_r,iz_r,           &
+         wflux_s2r,wmass_source)
    
    end function
 

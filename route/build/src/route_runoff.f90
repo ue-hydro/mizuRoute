@@ -109,8 +109,8 @@ call system_clock(endTime)
 elapsedTime = real(endTime-startTime, kind(dp))/real(cr)
 write(*,"(A,1PG15.7,A)") '   elapsed-time [output] = ', elapsedTime, ' s'
 
-! openwq: call run_time_start function
-call openwq_run_time_end(openwq_obj)
+  ! openwq: call run_time_start function
+  call openwq_run_time_end(openwq_obj)
 
   call main_restart(ierr, cmessage)
   if(ierr/=0) call handle_err(ierr, cmessage)

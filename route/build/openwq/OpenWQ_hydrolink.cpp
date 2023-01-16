@@ -165,6 +165,46 @@ int CLASSWQ_openwq::openwq_run_time_start(
     return 0;
 }
 
+int CLASSWQ_openwq::openwq_run_space(
+    int simtime_summa[], 
+    int source, int ix_s, int iy_s, int iz_s,
+    int recipient, int ix_r, int iy_r, int iz_r, 
+    double wflux_s2r, double wmass_source) {
+
+    // Convert Fortran Index to C++ index
+    ix_s -= 1; iy_s -= 1; iz_s -= 1;
+    ix_r -= 1; iy_r -= 1; iz_r -= 1;
+
+   
+    time_t simtime = OpenWQ_units_ref->convert_time(
+        simtime_summa[0], 
+        simtime_summa[1], 
+        simtime_summa[2], 
+        simtime_summa[3], 
+        simtime_summa[4],
+        0);
+    
+    OpenWQ_couplercalls_ref->RunSpaceStep(
+        *OpenWQ_hostModelconfig_ref,
+        *OpenWQ_json_ref,
+        *OpenWQ_wqconfig_ref,            // create OpenWQ_wqconfig object
+        *OpenWQ_units_ref,               // functions for unit conversion
+        *OpenWQ_utils_ref,                // utility methods/functions
+        *OpenWQ_readjson_ref,            // read json files
+        *OpenWQ_vars_ref,
+        *OpenWQ_initiate_ref,            // initiate modules
+        *OpenWQ_watertransp_ref,         // transport modules
+        *OpenWQ_chem_ref,                // biochemistry modules
+        *OpenWQ_extwatflux_ss_ref,       // sink and source modules
+        *OpenWQ_solver_ref,
+        *OpenWQ_output_ref,
+        simtime,
+        source, ix_s, iy_s, iz_s,
+        recipient, ix_r, iy_r, iz_r,
+        wflux_s2r, wmass_source);
+
+    return 0;
+}
 
 int CLASSWQ_openwq::openwq_run_time_end(
     int simtime_mizuroute[]) {

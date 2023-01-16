@@ -12,6 +12,8 @@ USE irf_route_module,    only : irf_route                  ! unit hydrograph (im
 USE dfw_route_module,    only : dfw_route                  ! diffusive wave routing method
 USE kw_route_module,     only : kw_route                   ! kinematic wave routing method
 USE mc_route_module,     only : mc_route                   ! muskingum-cunge routing method
+! openwq
+USE mizuroute_openwq,   only:openwq_run_space_step
 
 implicit none
 
@@ -208,6 +210,9 @@ contains
     elapsedTime = real(endTime-startTime, kind(dp))/real(cr)
     write(*,"(A,1PG15.7,A)") '      elapsed-time [dfw_route] = ', elapsedTime, ' s'
   endif
+
+  ! openwq space
+  call openwq_run_space_step()
 
  end subroutine main_route
 

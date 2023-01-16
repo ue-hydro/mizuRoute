@@ -72,6 +72,20 @@ int openwq_run_time_start(
     );   
 }
 
+int openwq_run_space(
+    CLASSWQ_openwq *openWQ, 
+    int simtime_summa[], 
+    int source, int ix_s, int iy_s, int iz_s,
+    int recipient, int ix_r, int iy_r, int iz_r, 
+    double wflux_s2r, double wmass_source) {
+
+    return openWQ->openwq_run_space(
+        simtime_summa, 
+        source, ix_s, iy_s, iz_s,
+        recipient, ix_r, iy_r, iz_r, 
+        wflux_s2r, wmass_source);
+}
+
 int openwq_run_time_end(
     CLASSWQ_openwq *openWQ, 
     int simtime_mizuroute[]) {

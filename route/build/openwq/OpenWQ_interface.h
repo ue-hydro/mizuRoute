@@ -48,6 +48,13 @@ extern "C" {
         //double aquiferStorage
         );
 
+    int openwq_run_space(
+        CLASSWQ_openwq *openWQ, 
+        int simtime_summa[], 
+        int source, int ix_s, int iy_s, int iz_s,
+        int recipient, int ix_r, int iy_r, int iz_r, 
+        double wflux_s2r, double wmass_source);
+
     int openwq_run_time_end(
         CLASSWQ_openwq *openWQ, 
         int simtime_mizuroute[]);
