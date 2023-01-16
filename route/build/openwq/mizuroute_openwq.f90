@@ -518,7 +518,7 @@ subroutine openwq_run_space_step()
       ! ====================================================
       ! 1 River routing
       ! ====================================================
-      do iRch = 1, nRch-1 ! last layer of snow becomes different fluxes 
+      do iRch = 1, nRch 
         ! *Source*: 
         index_s_openwq = river_network_reaches
         ix_s_openwq          = iRch
@@ -529,11 +529,11 @@ subroutine openwq_run_space_step()
         ! *Flux*
         wflux_s2r_openwq     = RCHFLX(1,iRch)%ROUTE(1)%REACH_Q
         ! *Call openwq_run_space* if wflux_s2r not 0
-        err=openwq_obj%openwq_run_space(                       &
-          simtime,                                      &
-          index_s_openwq, ix_s_openwq, iy_s_openwq, iz_s_openwq,         &
-          index_r_openwq, ix_r_openwq, iy_r_openwq, iz_r_openwq,         &
-          wflux_s2r_openwq,                                    &
+        err=openwq_obj%openwq_run_space(                          &
+          simtime,                                                &
+          index_s_openwq, ix_s_openwq, iy_s_openwq, iz_s_openwq,  &
+          index_r_openwq, ix_r_openwq, iy_r_openwq, iz_r_openwq,  &
+          wflux_s2r_openwq,                                       &
           wmass_source_openwq)
       end do
 
