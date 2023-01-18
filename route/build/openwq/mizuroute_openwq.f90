@@ -300,6 +300,7 @@ subroutine openwq_run_space_step()
   USE globalData,       ONLY : nRch
   USE globalData,       only : NETOPO
   USE globalData,       only : RCHFLX
+  USE globalData,       only : TSEC
   
   implicit none
   
@@ -320,6 +321,7 @@ subroutine openwq_run_space_step()
   integer(i4b)                           :: iRch      ! variable needed for looping through reaches
 
   integer(i4b)                           :: simtime(6) ! 5 time values yy-mm-dd-hh-min
+  real(dp)                               :: mizuroute_timestep
   integer(i4b)                           :: err
   !real(rkind),parameter                  :: valueMissing=-9999._rkind   ! seems to be SUMMA's default value for missing data
 
@@ -340,6 +342,8 @@ subroutine openwq_run_space_step()
   integer(i4b)                           :: iz_r_openwq
   real(dp)                               :: wflux_s2r_openwq
   real(dp)                               :: wmass_source_openwq
+  real(dp)                               :: compt_vol_m3
+  real(dp)                               :: flux_m3_sec
 
   ! Summa to OpenWQ units
   ! DomainVars
@@ -397,6 +401,9 @@ subroutine openwq_run_space_step()
   iy_r_openwq = 1
   iz_s_openwq = 1
   iz_r_openwq = 1 
+
+  ! Time step
+  mizuroute_timestep = TSEC(1) - TSEC(0)  
 
   !do iGRU=1,nGRU
   !  do iHRU=1,gru_struc(iGRU)%hruCount
@@ -522,13 +529,15 @@ subroutine openwq_run_space_step()
         ! *Source*: 
         index_s_openwq = river_network_reaches
         ix_s_openwq          = iRch
-        wmass_source_openwq  = RCHFLX(1,iRch)%ROUTE(1)%REACH_VOL(0)
+        compt_vol_m3         = RCHFLX(1,iRch)%ROUTE(1)%REACH_VOL(0)
+        wmass_source_openwq  = compt_vol_m3
         ! *Recipient*: 
-        index_r_openwq = river_network_reaches
+        index_r_openwq       = river_network_reaches
         ix_r_openwq          = NETOPO(iRch)%DREACHI
         if(ix_r_openwq.eq.-1) continue ! skip if at end of reach as water does not move
         ! *Flux*
-        wflux_s2r_openwq     = RCHFLX(1,iRch)%ROUTE(1)%REACH_Q * timestep
+        flux_m3_sec      = RCHFLX(1,iRch)%ROUTE(1)%REACH_Q * mizuroute_timestep
+        wflux_s2r_openwq = flux_m3_sec
         ! *Call openwq_run_space* if wflux_s2r not 0
         err=openwq_obj%openwq_run_space(                          &
           simtime,                                                &
