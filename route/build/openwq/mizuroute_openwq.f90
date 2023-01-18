@@ -344,6 +344,7 @@ subroutine openwq_run_space_step()
   real(dp)                               :: wmass_source_openwq
   real(dp)                               :: compt_vol_m3
   real(dp)                               :: flux_m3_sec
+  real(dp)                               :: flux_m3_timestep
 
   ! Summa to OpenWQ units
   ! DomainVars
@@ -534,11 +535,12 @@ subroutine openwq_run_space_step()
         ! *Recipient*: 
         index_r_openwq       = river_network_reaches
         ix_r_openwq          = NETOPO(iRch)%DREACHI
-        if(ix_r_openwq.eq.-1) continue ! skip if at end of reach as water does not move
+        if(ix_r_openwq .eq. -1) cycle ! skip if at end of reach as water does not move
         ! *Flux*
-        flux_m3_sec      = RCHFLX(1,iRch)%ROUTE(1)%REACH_Q * mizuroute_timestep
-        wflux_s2r_openwq = flux_m3_sec
-        ! *Call openwq_run_space* if wflux_s2r not 0
+        flux_m3_sec      = RCHFLX(1,iRch)%ROUTE(1)%REACH_Q
+        flux_m3_timestep = flux_m3_sec * mizuroute_timestep
+        wflux_s2r_openwq = flux_m3_timestep
+        ! *Call openwq_run_space* if wflux_s2r_openwq not 0
         err=openwq_obj%openwq_run_space(                          &
           simtime,                                                &
           index_s_openwq, ix_s_openwq, iy_s_openwq, iz_s_openwq,  &
