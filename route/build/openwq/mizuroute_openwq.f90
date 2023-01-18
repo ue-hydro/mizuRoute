@@ -526,8 +526,9 @@ subroutine openwq_run_space_step()
         ! *Recipient*: 
         index_r_openwq = river_network_reaches
         ix_r_openwq          = NETOPO(iRch)%DREACHI
+        if(ix_r_openwq.eq.-1) continue ! skip if at end of reach as water does not move
         ! *Flux*
-        wflux_s2r_openwq     = RCHFLX(1,iRch)%ROUTE(1)%REACH_Q
+        wflux_s2r_openwq     = RCHFLX(1,iRch)%ROUTE(1)%REACH_Q * timestep
         ! *Call openwq_run_space* if wflux_s2r not 0
         err=openwq_obj%openwq_run_space(                          &
           simtime,                                                &
