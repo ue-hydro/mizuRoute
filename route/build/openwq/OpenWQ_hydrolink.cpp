@@ -111,7 +111,7 @@ int CLASSWQ_openwq::openwq_run_time_start(
     //double aquiferWatVol_stateVar_summa_m3
     ) {
     
-    time_t simtime = OpenWQ_units_ref->convert_time(
+    time_t simtime = OpenWQ_units_ref->convertTime_ints2time_t(
         simtime_mizuroute[0], 
         simtime_mizuroute[1], 
         simtime_mizuroute[2], 
@@ -176,7 +176,7 @@ int CLASSWQ_openwq::openwq_run_space(
     ix_r -= 1; iy_r -= 1; iz_r -= 1;
 
    
-    time_t simtime = OpenWQ_units_ref->convert_time(
+    time_t simtime = OpenWQ_units_ref->convertTime_ints2time_t(
         simtime_summa[0], 
         simtime_summa[1], 
         simtime_summa[2], 
@@ -209,7 +209,7 @@ int CLASSWQ_openwq::openwq_run_space(
 int CLASSWQ_openwq::openwq_run_time_end(
     int simtime_mizuroute[]) {
     
-    time_t simtime = OpenWQ_units_ref->convert_time(
+    time_t simtime = OpenWQ_units_ref->convertTime_ints2time_t(
         simtime_mizuroute[0], 
         simtime_mizuroute[1], 
         simtime_mizuroute[2], 
