@@ -66,7 +66,7 @@ int CLASSWQ_openwq::decl(
 
         // External fluxes
         // Make sure to use capital letters for external fluxes
-    //    OpenWQ_hostModelconfig_ref->HydroExtFlux.push_back(OpenWQ_hostModelconfig::hydroTuple(0,"PRECIP",   num_HRU,nYdirec_2openwq,1));
+        OpenWQ_hostModelconfig_ref->HydroExtFlux.push_back(OpenWQ_hostModelconfig::hydroTuple(summaEWF_runoff_openwq,"PRECIP", nRch, 1, 1));
 
         // Dependencies
         // to expand BGC modelling options

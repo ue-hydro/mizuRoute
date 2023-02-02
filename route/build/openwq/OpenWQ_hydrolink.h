@@ -38,6 +38,9 @@
   //inline int aquifer_index_openwq   = 4;
   //inline int max_snow_layers        = 5;
 
+// Global Indexes for EWF
+  inline int summaEWF_runoff_openwq = 0;
+
 class CLASSWQ_openwq
 {
 
