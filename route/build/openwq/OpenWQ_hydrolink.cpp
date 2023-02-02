@@ -66,7 +66,7 @@ int CLASSWQ_openwq::decl(
 
         // External fluxes
         // Make sure to use capital letters for external fluxes
-        OpenWQ_hostModelconfig_ref->HydroExtFlux.push_back(OpenWQ_hostModelconfig::hydroTuple(summaEWF_runoff_openwq,"PRECIP", nRch, 1, 1));
+        OpenWQ_hostModelconfig_ref->HydroExtFlux.push_back(OpenWQ_hostModelconfig::hydroTuple(summaEWF_runoff_openwq,"SUMMA_RUNOFF", nRch, 1, 1));
 
         // Dependencies
         // to expand BGC modelling options
@@ -202,6 +202,45 @@ int CLASSWQ_openwq::openwq_run_space(
         source, ix_s, iy_s, iz_s,
         recipient, ix_r, iy_r, iz_r,
         wflux_s2r, wmass_source);
+
+    return 0;
+}
+
+int CLASSWQ_openwq::openwq_run_space_in(
+    int simtime_summa[],
+    std::string source_EWF_name,
+    int recipient, int ix_r, int iy_r, int iz_r, 
+    double wflux_s2r) {
+
+    // Convert Fortran Index to C++ index
+    ix_r -= 1; iy_r -= 1; iz_r -= 1;
+    
+    time_t simtime = OpenWQ_units_ref->convertTime_ints2time_t(
+        simtime_summa[0], 
+        simtime_summa[1], 
+        simtime_summa[2], 
+        simtime_summa[3], 
+        simtime_summa[4],
+        0);
+
+     OpenWQ_couplercalls_ref->RunSpaceStep_IN(
+        *OpenWQ_hostModelconfig_ref,
+        *OpenWQ_json_ref,
+        *OpenWQ_wqconfig_ref,
+        *OpenWQ_units_ref,
+        *OpenWQ_utils_ref,
+        *OpenWQ_readjson_ref,
+        *OpenWQ_vars_ref,
+        *OpenWQ_initiate_ref,
+        *OpenWQ_watertransp_ref,
+        *OpenWQ_chem_ref,
+        *OpenWQ_extwatflux_ss_ref,
+        *OpenWQ_solver_ref,
+        *OpenWQ_output_ref,
+        simtime,
+        source_EWF_name,
+        recipient, ix_r, iy_r, iz_r,
+        wflux_s2r);
 
     return 0;
 }

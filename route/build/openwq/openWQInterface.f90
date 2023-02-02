@@ -98,6 +98,27 @@ interface
 
     end function
 
+    function openwq_run_space_in_c( &
+        openWQ, &
+        simtime, &
+        source_EWF_name, &
+        recipient,ix_r,iy_r,iz_r, &
+        wflux_s2r) bind(C, name="openwq_run_space_in")
+
+        USE iso_c_binding
+        implicit none
+        integer(c_int) :: openwq_run_space_in_c
+        type(c_ptr), intent(in), value         :: openWQ
+        integer(c_int), intent(in)             :: simtime(5)
+        integer(c_int), intent(in), value      :: recipient
+        integer(c_int), intent(in), value      :: ix_r
+        integer(c_int), intent(in), value      :: iy_r
+        integer(c_int), intent(in), value      :: iz_r
+        real(c_double), intent(in), value      :: wflux_s2r
+        character(c_char), intent(in)          :: source_EWF_name
+
+    end function
+
     function openwq_run_time_end_c( &
         openWQ, &
         simtime) bind(C, name="openwq_run_time_end")

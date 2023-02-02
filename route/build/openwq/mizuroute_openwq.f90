@@ -9,6 +9,7 @@ module mizuroute_openwq
   public :: openwq_init
   public :: openwq_run_time_start
   !public :: openwq_run_time_start_go
+  public :: openwq_run_space_step_basin_in
   public :: openwq_run_space_step
   public :: openwq_run_time_end
 
@@ -279,8 +280,166 @@ subroutine openwq_run_time_start(  &
 
 end subroutine openwq_run_time_start
 
+!  OpenWQ space basin/summa
+subroutine openwq_run_space_step_basin_in(     &
+      reachRunoff_local)
 
-! OpenWQ space
+!USE var_lookup,   only: iLookPROG  ! named variables for state variables
+!USE var_lookup,   only: iLookTIME  ! named variables for time data structure
+!USE var_lookup,   only: iLookFLUX  ! named varaibles for flux data
+!USE var_lookup,   only: iLookATTR  ! named variables for real valued attribute data structure
+!USE var_lookup,   only: iLookINDEX 
+!USE summa_type,   only: summa1_type_dec            ! master summa data type
+USE globalData,   only: openwq_obj
+!USE data_types,   only: var_dlength,var_i
+!USE globalData,   only: gru_struc
+!USE globalData,   only: data_step   ! time step of forcing data (s)
+!USE multiconst,   only:&
+!                      iden_ice,       & ! intrinsic density of ice             (kg m-3)
+!                      iden_water        ! intrinsic density of liquid water    (kg m-3)
+USE globalData,       ONLY: modTime        ! previous and current model time
+USE globalData,       ONLY : nRch
+USE globalData,       only : NETOPO
+USE globalData,       only : RCHFLX
+USE globalData,       only : TSEC
+
+implicit none
+
+!type(var_i),             intent(in)    :: timeStruct 
+!type(gru_hru_doubleVec), intent(in)    :: fluxStruct
+!type(summa1_type_dec),   intent(in)    :: summa1_struc
+!type(fluxes), intent(in)                :: fluxes
+!type(RCHTOPO), intent(in)               :: NETOPO(:)
+!type(strflx), intent(in)                :: RCHFLX(:)
+
+
+!integer(i4b),            intent(in)    :: nGRU
+
+!integer(i4b)                           :: hru_index ! needed because openWQ saves hrus as a single array
+!integer(i4b)                           :: iHRU      ! variable needed for looping
+!integer(i4b)                           :: iGRU      ! variable needed for looping
+!integer(i4b)                           :: iLayer    ! variable needed for looping
+integer(i4b)                           :: iRch      ! variable needed for looping through reaches
+
+integer(i4b)                           :: simtime(6) ! 5 time values yy-mm-dd-hh-min
+real(dp)                               :: mizuroute_timestep
+integer(i4b)                           :: err
+!real(rkind),parameter                  :: valueMissing=-9999._rkind   ! seems to be SUMMA's default value for missing data
+
+! compartment indexes in OpenWQ (defined in the hydrolink)
+integer(i4b)                           :: river_network_reaches    = 0
+!integer(i4b)                           :: canopy_index_openwq    = 0
+!integer(i4b)                           :: snow_index_openwq      = 1
+!integer(i4b)                           :: runoff_index_openwq    = 2
+!integer(i4b)                           :: soil_index_openwq      = 3
+!integer(i4b)                           :: aquifer_index_openwq   = 4
+integer(i4b)                           :: index_s_openwq
+integer(i4b)                           :: index_r_openwq
+integer(i4b)                           :: ix_s_openwq
+integer(i4b)                           :: ix_r_openwq
+integer(i4b)                           :: iy_s_openwq
+integer(i4b)                           :: iy_r_openwq
+integer(i4b)                           :: iz_s_openwq
+integer(i4b)                           :: iz_r_openwq
+real(dp)                               :: wflux_s2r_openwq
+real(dp)                               :: wmass_source_openwq
+real(dp)                               :: compt_vol_m3
+real(dp)                               :: flux_m3_sec
+real(dp)                               :: flux_m3_timestep
+
+real(dp)       , intent(in)           :: reachRunoff_local(:)   ! reach runoff (m/s)
+
+! Summa to OpenWQ units
+! DomainVars
+!real(rkind)                            :: hru_area_m2
+! PrecipVars
+!real(rkind)                            :: scalarRainfall_summa_m3
+!real(rkind)                            :: scalarSnowfall_summa_m3
+!real(rkind)                            :: scalarThroughfallRain_summa_m3
+!real(rkind)                            :: scalarThroughfallSnow_summa_m3
+! CanopyVars
+!real(rkind)                            :: canopyStorWat_kg_m3
+!real(rkind)                            :: scalarCanopySnowUnloading_summa_m3
+!real(rkind)                            :: scalarCanopyLiqDrainage_summa_m3
+!real(rkind)                            :: scalarCanopyTranspiration_summa_m3
+!real(rkind)                            :: scalarCanopyEvaporation_summa_m3
+!real(rkind)                            :: scalarCanopySublimation_summa_m3
+! runoff vars
+!real(rkind)                            :: scalarRunoffVol_m3
+!real(rkind)                            :: scalarSurfaceRunoff_summa_m3
+!real(rkind)                            :: scalarInfiltration_summa_m3
+! Snow_SoilVars
+!real(rkind)                            :: mLayerLiqFluxSnow_summa_m3
+!real(rkind)                            :: iLayerLiqFluxSoil_summa_m3
+!real(rkind)                            :: mLayerVolFracWat_summa_m3
+!real(rkind)                            :: scalarSnowSublimation_summa_m3
+!real(rkind)                            :: scalarSfcMeltPond_summa_m3
+!real(rkind)                            :: scalarGroundEvaporation_summa_m3
+!real(rkind)                            :: scalarExfiltration_summa_m3
+!real(rkind)                            :: mLayerBaseflow_summa_m3
+!real(rkind)                            :: scalarSoilDrainage_summa_m3
+!real(rkind)                            :: mLayerTranspire_summa_m3
+! AquiferVars
+!real(rkind)                            :: scalarAquiferBaseflow_summa_m3
+!real(rkind)                            :: scalarAquiferRecharge_summa_m3
+!real(rkind)                            :: scalarAquiferStorage_summa_m3
+!real(rkind)                            :: scalarAquiferTranspire_summa_m3
+
+!simtime(1) = timeStruct%var(iLookTIME%iyyy)  ! Year
+!simtime(2) = timeStruct%var(iLookTIME%im)    ! month
+!simtime(3) = timeStruct%var(iLookTIME%id)    ! hour
+!simtime(4) = timeStruct%var(iLookTIME%ih)    ! day
+!simtime(5) = timeStruct%var(iLookTIME%imin)  ! minute
+simtime(1) = modTime(1)%year()
+simtime(2) = modTime(1)%month()
+simtime(3) = modTime(1)%day()
+simtime(4) = modTime(1)%hour()
+simtime(5) = modTime(1)%minute()
+simtime(6) = modTime(1)%sec()
+
+!hru_index = 0
+
+! Summa does not have a y-direction, 
+! so the dimension will always be 1
+iy_r_openwq = 1
+iz_r_openwq = 1 
+
+! Time step
+mizuroute_timestep = TSEC(1) - TSEC(0)  
+
+
+      ! Reset Runoff (it's not tracked by SUMMA, so need to track it here)
+      !scalarRunoffVol_m3 = 0._rkind
+
+      ! ####################################################################
+      ! Apply Fluxes
+      ! Call RunSpaceStep
+      ! ####################################################################
+
+      ! ====================================================
+      ! 1 Basin routing: SUMMA to MizuRoute
+      ! ====================================================
+
+      do iRch = 1, nRch 
+            ! *Source*:
+            ! PRECIP (external flux, so need call openwq_run_space_in) 
+            ! *Recipient*: canopy (only 1 z layer)
+            index_r_openwq = river_network_reaches
+            ix_r_openwq          = iRch 
+            ! *Flux*: the portion of rainfall and snowfall not throughfall
+            wflux_s2r_openwq = reachRunoff_local(iRch)
+            ! *Call openwq_run_space_in* if wflux_s2r not 0
+            err=openwq_obj%openwq_run_space_in(          &
+            simtime,                                     &
+            'SUMMA_RUNOFF',                              &
+            index_r_openwq, ix_r_openwq, iy_r_openwq, iz_r_openwq,  &
+            wflux_s2r_openwq)
+      end do
+
+      
+end subroutine openwq_run_space_step_basin_in
+
+! OpenWQ space (wihtin mizuroute)
 subroutine openwq_run_space_step()
 
   !USE var_lookup,   only: iLookPROG  ! named variables for state variables
@@ -345,6 +504,8 @@ subroutine openwq_run_space_step()
   real(dp)                               :: compt_vol_m3
   real(dp)                               :: flux_m3_sec
   real(dp)                               :: flux_m3_timestep
+
+
 
   ! Summa to OpenWQ units
   ! DomainVars
@@ -523,6 +684,8 @@ subroutine openwq_run_space_step()
       ! Call RunSpaceStep
       ! ####################################################################
 
+
+
       ! ====================================================
       ! 1 River routing
       ! ====================================================
@@ -546,7 +709,7 @@ subroutine openwq_run_space_step()
           index_s_openwq, ix_s_openwq, iy_s_openwq, iz_s_openwq,  &
           index_r_openwq, ix_r_openwq, iy_r_openwq, iz_r_openwq,  &
           wflux_s2r_openwq,                                       &
-          wmass_source_openwq)
+          wmass_source_openwq + wflux_s2r_openwq)
       end do
 
       ! --------------------------------------------------------------------

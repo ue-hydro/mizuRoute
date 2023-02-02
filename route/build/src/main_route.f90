@@ -13,7 +13,7 @@ USE dfw_route_module,    only : dfw_route                  ! diffusive wave rout
 USE kw_route_module,     only : kw_route                   ! kinematic wave routing method
 USE mc_route_module,     only : mc_route                   ! muskingum-cunge routing method
 ! openwq
-USE mizuroute_openwq,   only:openwq_run_space_step
+USE mizuroute_openwq,   only:openwq_run_space_step, openwq_run_space_step_basin_in
 
 implicit none
 
@@ -92,6 +92,9 @@ contains
   call system_clock(endTime)
   elapsedTime = real(endTime-startTime, kind(dp))/real(cr)
   write(*,"(A,1PG15.7,A)") '      elapsed-time [basin2reach] = ', elapsedTime, ' s'
+
+  ! openwq space
+  call openwq_run_space_step_basin_in(reachRunoff_local)
 
   ! 2. subroutine: basin route
   if (doesBasinRoute == 1) then

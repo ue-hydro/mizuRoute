@@ -16,7 +16,7 @@ module openwq
     procedure :: decl => openWQ_init
     procedure :: openwq_run_time_start => openwq_run_time_start
     procedure :: openwq_run_space => openwq_run_space
-    !procedure :: openwq_run_space_in => openwq_run_space_in
+    procedure :: openwq_run_space_in => openwq_run_space_in
     procedure :: openwq_run_time_end => openwq_run_time_end
 
  end type
@@ -155,6 +155,33 @@ module openwq
          wflux_s2r,wmass_source)
    
    end function
+
+   integer function openwq_run_space_in(  &
+      this,                               &
+      simtime,                            &
+      source_EWF_name,                    &
+      recipient,ix_r,iy_r,iz_r,           &
+      wflux_s2r)
+
+      implicit none
+      class(CLASSWQ_openwq)      :: this
+      integer(i4b), intent(in)   :: simtime(5) ! 5 is the number of timevars
+      integer(i4b), intent(in)   :: recipient
+      integer(i4b), intent(in)   :: ix_r
+      integer(i4b), intent(in)   :: iy_r
+      integer(i4b), intent(in)   :: iz_r
+      real(dp),  intent(in)      :: wflux_s2r
+      character(*), intent(in)   :: source_EWF_name
+
+      openwq_run_space_in = openwq_run_space_in_c( &
+         this%ptr,                                 &
+         simtime,                                  &
+         source_EWF_name,                          &
+         recipient,ix_r,iy_r,iz_r,                 &
+         wflux_s2r)
+
+   end function
+
 
    integer function openwq_run_time_end(  &
       this,                               &

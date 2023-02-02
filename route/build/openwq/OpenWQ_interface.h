@@ -55,6 +55,13 @@ extern "C" {
         int recipient, int ix_r, int iy_r, int iz_r, 
         double wflux_s2r, double wmass_source);
 
+    int openwq_run_space_in(
+        CLASSWQ_openwq *openWQ, 
+        int simtime_summa[],
+        char* source_EWF_name,
+        int recipient, int ix_r, int iy_r, int iz_r, 
+        double wflux_s2r);
+
     int openwq_run_time_end(
         CLASSWQ_openwq *openWQ, 
         int simtime_mizuroute[]);
