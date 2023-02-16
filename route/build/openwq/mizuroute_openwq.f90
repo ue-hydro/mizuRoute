@@ -281,8 +281,7 @@ subroutine openwq_run_time_start(  &
 end subroutine openwq_run_time_start
 
 !  OpenWQ space basin/summa
-subroutine openwq_run_space_step_basin_in(     &
-      reachRunoff_local)
+subroutine openwq_run_space_step_basin_in()
 
 !USE var_lookup,   only: iLookPROG  ! named variables for state variables
 !USE var_lookup,   only: iLookTIME  ! named variables for time data structure
@@ -341,13 +340,12 @@ integer(i4b)                           :: iy_s_openwq
 integer(i4b)                           :: iy_r_openwq
 integer(i4b)                           :: iz_s_openwq
 integer(i4b)                           :: iz_r_openwq
-real(dp)                               :: wflux_s2r_openwq
 real(dp)                               :: wmass_source_openwq
 real(dp)                               :: compt_vol_m3
 real(dp)                               :: flux_m3_sec
 real(dp)                               :: flux_m3_timestep
 
-real(dp)       , intent(in)           :: reachRunoff_local(:)   ! reach runoff (m/s)
+!real(dp)       , intent(in)           :: reachRunoff_local(:)   ! reach runoff (m/s)
 
 ! Summa to OpenWQ units
 ! DomainVars
@@ -419,7 +417,7 @@ mizuroute_timestep = TSEC(1) - TSEC(0)
       ! ====================================================
       ! 1 Basin routing: SUMMA to MizuRoute
       ! ====================================================
-
+ 
       do iRch = 1, nRch 
             ! *Source*:
             ! PRECIP (external flux, so need call openwq_run_space_in) 
@@ -427,20 +425,25 @@ mizuroute_timestep = TSEC(1) - TSEC(0)
             index_r_openwq = river_network_reaches
             ix_r_openwq          = iRch 
             ! *Flux*: the portion of rainfall and snowfall not throughfall
-            wflux_s2r_openwq = reachRunoff_local(iRch)
+            flux_m3_sec = RCHFLX(1,iRch)%BASIN_QR(0) 
+            flux_m3_timestep = flux_m3_sec * mizuroute_timestep
             ! *Call openwq_run_space_in* if wflux_s2r not 0
             err=openwq_obj%openwq_run_space_in(          &
             simtime,                                     &
             'SUMMA_RUNOFF',                              &
             index_r_openwq, ix_r_openwq, iy_r_openwq, iz_r_openwq,  &
-            wflux_s2r_openwq)
+            flux_m3_timestep)
       end do
 
       
 end subroutine openwq_run_space_step_basin_in
 
 ! OpenWQ space (wihtin mizuroute)
-subroutine openwq_run_space_step()
+subroutine openwq_run_space_step(segIndex,                         & ! index
+                                    REACH_VOL_segIndex,               & ! Volume
+                                    Qlocal_in,                        & ! flow in
+                                    Qlocal_out)                        ! flow out
+
 
   !USE var_lookup,   only: iLookPROG  ! named variables for state variables
   !USE var_lookup,   only: iLookTIME  ! named variables for time data structure
@@ -483,6 +486,11 @@ subroutine openwq_run_space_step()
   real(dp)                               :: mizuroute_timestep
   integer(i4b)                           :: err
   !real(rkind),parameter                  :: valueMissing=-9999._rkind   ! seems to be SUMMA's default value for missing data
+
+  integer(i4b) :: segIndex                  ! index
+  real(dp) :: REACH_VOL_segIndex            ! Volume
+  real(dp) :: Qlocal_in                     ! flow in
+  real(dp) :: Qlocal_out                    ! flow out
 
   ! compartment indexes in OpenWQ (defined in the hydrolink)
   integer(i4b)                           :: river_network_reaches    = 0
@@ -689,28 +697,27 @@ subroutine openwq_run_space_step()
       ! ====================================================
       ! 1 River routing
       ! ====================================================
-      do iRch = 1, nRch 
-        ! *Source*: 
-        index_s_openwq = river_network_reaches
-        ix_s_openwq          = iRch
-        compt_vol_m3         = RCHFLX(1,iRch)%ROUTE(1)%REACH_VOL(0)
-        wmass_source_openwq  = compt_vol_m3
-        ! *Recipient*: 
-        index_r_openwq       = river_network_reaches
-        ix_r_openwq          = NETOPO(iRch)%DREACHI
-        if(ix_r_openwq .eq. -1) cycle ! skip if at end of reach as water does not move
-        ! *Flux*
-        flux_m3_sec      = RCHFLX(1,iRch)%ROUTE(1)%REACH_Q
-        flux_m3_timestep = flux_m3_sec * mizuroute_timestep
-        wflux_s2r_openwq = flux_m3_timestep
-        ! *Call openwq_run_space* if wflux_s2r_openwq not 0
-        err=openwq_obj%openwq_run_space(                          &
-          simtime,                                                &
-          index_s_openwq, ix_s_openwq, iy_s_openwq, iz_s_openwq,  &
-          index_r_openwq, ix_r_openwq, iy_r_openwq, iz_r_openwq,  &
-          wflux_s2r_openwq,                                       &
-          wmass_source_openwq + wflux_s2r_openwq)
-      end do
+      ! segIndex to segIndex+1
+      index_s_openwq = river_network_reaches
+      ix_s_openwq          = segIndex
+      compt_vol_m3         = REACH_VOL_segIndex + Qlocal_in
+      wmass_source_openwq  = compt_vol_m3
+      ! *Recipient*: 
+      index_r_openwq       = river_network_reaches
+      ix_r_openwq          = NETOPO(segIndex)%DREACHI
+      !ix_r_openwq          = segIndex + 1
+      if(ix_r_openwq.eq.-1) return
+      ! flux
+      flux_m3_timestep = Qlocal_out
+      wflux_s2r_openwq = flux_m3_timestep
+      ! *Call openwq_run_space* if wflux_s2r_openwq not 0
+      err=openwq_obj%openwq_run_space(                          &
+      simtime,                                                &
+      index_s_openwq, ix_s_openwq, iy_s_openwq, iz_s_openwq,  &
+      index_r_openwq, ix_r_openwq, iy_r_openwq, iz_r_openwq,  &
+      wflux_s2r_openwq,                                       &
+      wmass_source_openwq)
+
 
       ! --------------------------------------------------------------------
       ! %%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -13,7 +13,7 @@ USE dfw_route_module,    only : dfw_route                  ! diffusive wave rout
 USE kw_route_module,     only : kw_route                   ! kinematic wave routing method
 USE mc_route_module,     only : mc_route                   ! muskingum-cunge routing method
 ! openwq
-USE mizuroute_openwq,   only:openwq_run_space_step, openwq_run_space_step_basin_in
+USE mizuroute_openwq,   only : openwq_run_space_step_basin_in
 
 implicit none
 
@@ -93,9 +93,6 @@ contains
   elapsedTime = real(endTime-startTime, kind(dp))/real(cr)
   write(*,"(A,1PG15.7,A)") '      elapsed-time [basin2reach] = ', elapsedTime, ' s'
 
-  ! openwq space
-  call openwq_run_space_step_basin_in(reachRunoff_local)
-
   ! 2. subroutine: basin route
   if (doesBasinRoute == 1) then
     call system_clock(startTime)
@@ -115,6 +112,9 @@ contains
     RCHFLX(iens,iSeg)%BASIN_QR(1) = reachRunoff_local(iSeg)         ! streamflow (m3/s)
     end do
   end if
+
+  ! openwq space
+  call openwq_run_space_step_basin_in()
 
   ! 3. subroutine: river reach routing
   if (onRoute(accumRunoff)) then
@@ -214,8 +214,6 @@ contains
     write(*,"(A,1PG15.7,A)") '      elapsed-time [dfw_route] = ', elapsedTime, ' s'
   endif
 
-  ! openwq space
-  call openwq_run_space_step()
 
  end subroutine main_route
 
