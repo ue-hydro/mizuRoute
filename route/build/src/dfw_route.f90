@@ -436,10 +436,10 @@ CONTAINS
    rstate%molecule%Q = Qlocal(1,:)
 
    ! openwq space
-   call openwq_run_space_step(segIndex,                         & ! index
-      rflux%ROUTE(idxDW)%REACH_VOL(0),  & ! Volume
-      Qlocal(1,1)*dT,                   & ! flow in
-      Qlocal(1,nMolecule%DW_ROUTE)*dT) ! flow out
+   call openwq_run_space_step(segIndex,   & ! index_openwq
+      rflux%ROUTE(idxDW)%REACH_VOL(0),    & ! Volume (source)
+      Qlocal(1,1)*dT,                     & ! flow in
+      Qlocal(1,nMolecule%DW_ROUTE)*dT)      ! flow out
 
 
  else ! if head-water

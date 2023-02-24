@@ -23,29 +23,13 @@ extern "C" {
     int openwq_decl(
         CLASSWQ_openwq *openWQ,
         int nRch
-        //int hruCount,               // num HRU
-        //int nCanopy_2openwq,      // num layers of canopy (fixed to 1)
-        //int nSnow_2openwq,        // num layers of snow (fixed to max of 5 because it varies)
-        //int nSoil_2openwq,        // num layers of snoil (variable)
-        //int nRunoff_2openwq,      // num layers of runoff (fixed to 1)
-        //int nAquifer_2openwq,     // num layers of aquifer (fixed to 1)
-        //int nYdirec_2openwq
         );           // num of layers in y-dir (set to 1 because not used in summa)
 
     int openwq_run_time_start(
         CLASSWQ_openwq *openWQ,
-        //bool last_hru_flag, 
-        //int index_hru, 
-        //int nSnow_2openwq, 
-        //int nSoil_2openwq,
-        int simtime_mizuroute[] 
-        //double soilMoist_depVar[], 
-        //double soilTemp_K_depVar[], 
-        //double airTemp_K_depVar, 
-        //double sweWatVol_stateVar[], 
-        //double canopyWat, 
-        //double soilWatVol_stateVar[], 
-        //double aquiferStorage
+        int simtime_mizuroute[],
+        int nRch_2openwq,
+        double REACH_VOL_0[]
         );
 
     int openwq_run_space(

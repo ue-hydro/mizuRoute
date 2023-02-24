@@ -12,7 +12,6 @@ module openwq
     type(c_ptr) :: ptr ! pointer to openWQ class
 
  contains
-   !  procedure :: get_num => openWQ_get_num
     procedure :: decl => openWQ_init
     procedure :: openwq_run_time_start => openwq_run_time_start
     procedure :: openwq_run_space => openwq_run_space
@@ -36,93 +35,34 @@ module openwq
     integer function openWQ_init(   &
       this,                         &
       nRch)                
-   !integer function openWQ_init( &
-   !   this,                      & ! openwq object
-   !   num_hru,                   & ! num HRU
-   !   nCanopy_2openwq,           & ! num layers of canopy (fixed to 1)
-   !   nSnow_2openwq,             & ! num layers of snow (fixed to max of 5 because it varies)
-   !   nSoil_2openwq,             & ! num layers of snoil (variable)
-   !   nRunoff_2openwq,           & ! num layers of runoff (fixed to 1)
-   !   nAquifer_2openwq,          & ! num layers of aquifer (fixed to 1)
-   !   nYdirec_2openwq)                 ! num of layers in y-dir (set to 1 because not used in summa)
       
       implicit none
       class(CLASSWQ_openwq) :: this
       integer(i4b), intent(in) :: nRch
-      !integer(i4b), intent(in) :: num_hru
-      !integer(i4b), intent(in) :: nCanopy_2openwq
-      !integer(i4b), intent(in) :: nSnow_2openwq
-      !integer(i4b), intent(in) :: nSoil_2openwq
-      !integer(i4b), intent(in) :: nRunoff_2openwq
-      !integer(i4b), intent(in) :: nAquifer_2openwq
-      
-      !integer(i4b), intent(in) :: nYdirec_2openwq
 
       openWQ_init = openwq_decl_c(  &
          this%ptr,                  &
          nRch)                 ! num of layers in y-dir (set to 1 because not used in summa)
-      !openWQ_init = openwq_decl_c(  &
-      !   this%ptr,                  & ! openwq object
-      !   num_hru,                   & ! num HRU
-      !   nCanopy_2openwq,         & ! num layers of canopy (fixed to 1)
-      !   nSnow_2openwq,           & ! num layers of snow (fixed to max of 5 because it varies)
-      !   nSoil_2openwq,           & ! num layers of snoil (variable)
-      !   nRunoff_2openwq,         & ! num layers of runoff (fixed to 1)
-      !   nAquifer_2openwq,        & ! num layers of aquifer (fixed to 1)
-      !   nYdirec_2openwq)                 ! num of layers in y-dir (set to 1 because not used in summa)
 
     end function
 
     integer function openwq_run_time_start(   &
       this,                                   &
-      simtime)
-    !integer function openwq_run_time_start(   &
-    !  this,                                  &
-    !  last_hru_flag,                         &
-    !  hru_index,                             &
-    !  nSnow_2openwq,                         &
-    !  nSoil_2openwq,                         &
-    !  simtime,                               &
-    !  soilMoist_depVar_summa_frac,           &                    
-    !  soilTemp_depVar_summa_K,               &
-    !  airTemp_depVar_summa_K,                &
-    !  sweWatVol_stateVar_summa_m3,           &
-    !  canopyWatVol_stateVar_summa_m3,        &
-    !  soilWatVol_stateVar_summa_m3,          &
-    !  aquiferWatVol_stateVar_summa_m3)
-      
+      simtime,                                &
+      nRch_2openwq,                         &
+      REACH_VOL_0)
+    
       implicit none
       class(CLASSWQ_openwq)      :: this
-     ! logical(1), intent(in)     :: last_hru_flag
-     ! integer(i4b), intent(in)   :: hru_index
-     ! integer(i4b), intent(in)   :: nSnow_2openwq
-     ! integer(i4b), intent(in)   :: nSoil_2openwq
+      integer(i4b), intent(in)   :: nRch_2openwq
       integer(i4b), intent(in)   :: simtime(6) ! 5 is the number of timevars
-     ! real(rkind),  intent(in)   :: airTemp_depVar_summa_K
-     ! real(rkind),  intent(in)   :: soilTemp_depVar_summa_K(nSoil_2openwq)
-     ! real(rkind),  intent(in)   :: soilMoist_depVar_summa_frac(nSoil_2openwq)
-     ! real(rkind),  intent(in)   :: canopyWatVol_stateVar_summa_m3
-     ! real(rkind),  intent(in)   :: sweWatVol_stateVar_summa_m3(nSnow_2openwq)
-     ! real(rkind),  intent(in)   :: soilWatVol_stateVar_summa_m3(nSoil_2openwq)
-     ! real(rkind),  intent(in)   :: aquiferWatVol_stateVar_summa_m3
+      real(dp),  intent(in)   :: REACH_VOL_0(nRch_2openwq)
 
       openwq_run_time_start = openwq_run_time_start_c(   &
          this%ptr,                                       &
-         simtime)
-      !openwq_run_time_start = openwq_run_time_start_c( &
-      !   this%ptr,                              & 
-      !   last_hru_flag,                         &
-      !   hru_index,                             &
-      !   nSnow_2openwq,                         &
-      !   nSoil_2openwq,                         &
-      !   simtime,                               &
-      !   soilMoist_depVar_summa_frac,           &                    
-      !   soilTemp_depVar_summa_K,               &
-      !   airTemp_depVar_summa_K,                &
-      !   sweWatVol_stateVar_summa_m3,           &
-      !   canopyWatVol_stateVar_summa_m3,        &
-      !   soilWatVol_stateVar_summa_m3,          &
-      !   aquiferWatVol_stateVar_summa_m3)
+         simtime,                                        &
+         nRch_2openwq,                                   &
+         REACH_VOL_0)
    
    end function
 

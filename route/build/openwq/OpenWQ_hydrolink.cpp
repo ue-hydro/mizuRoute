@@ -26,13 +26,6 @@ CLASSWQ_openwq::~CLASSWQ_openwq() {}
 
 int CLASSWQ_openwq::decl(
     int nRch
-    //int num_HRU,                // num HRU
-    //int nCanopy_2openwq,      // num layers of canopy (fixed to 1)
-    //int nSnow_2openwq,        // num layers of snow (fixed to max of 5 because it varies)
-    //int nSoil_2openwq,        // num layers of snoil (variable)
-    //int nRunoff_2openwq,      // num layers in the runoff of SUMMA
-    //int nAquifer_2openwq,     // num layers of aquifer (fixed to 1)
-    //int nYdirec_2openwq       // num of layers in y-dir (set to 1 because not used in summa)
     ){           
     
     OpenWQ_hostModelconfig_ref = new OpenWQ_hostModelconfig();
@@ -56,11 +49,6 @@ int CLASSWQ_openwq::decl(
         // Compartment names
         // Make sure to use capital letters for compartment names
         OpenWQ_hostModelconfig_ref->HydroComp.push_back(OpenWQ_hostModelconfig::hydroTuple(rivernetwork_nRch_openwq,"RIVER_NETWORK_REACHES", nRch, 1, 1));      // Canopy
-    //    OpenWQ_hostModelconfig_ref->HydroComp.push_back(OpenWQ_hostModelconfig::hydroTuple(snow_index_openwq,"ILAYERVOLFRACWAT_SNOW", num_HRU, nYdirec_2openwq, max_snow_layers));  // snow (layerd)
-    //    OpenWQ_hostModelconfig_ref->HydroComp.push_back(OpenWQ_hostModelconfig::hydroTuple(runoff_index_openwq,"RUNOFF", num_HRU, nYdirec_2openwq, nRunoff_2openwq));               // Runoff
-    //    OpenWQ_hostModelconfig_ref->HydroComp.push_back(OpenWQ_hostModelconfig::hydroTuple(soil_index_openwq,"ILAYERVOLFRACWAT_SOIL", num_HRU, nYdirec_2openwq, nSoil_2openwq));    // Soil (layerd)
-    //    OpenWQ_hostModelconfig_ref->HydroComp.push_back(OpenWQ_hostModelconfig::hydroTuple(aquifer_index_openwq,"SCALARAQUIFER", num_HRU, nYdirec_2openwq, nAquifer_2openwq));      // Aquifer
-
 
         OpenWQ_vars_ref = new OpenWQ_vars(OpenWQ_hostModelconfig_ref->HydroComp.size());
 
@@ -97,18 +85,9 @@ int CLASSWQ_openwq::decl(
 }
 
 int CLASSWQ_openwq::openwq_run_time_start(
-    //bool last_hru_flag,
-    //int index_hru, 
-    //int nSnow_2openwq, 
-    //int nSoil_2openwq,
-    int simtime_mizuroute[]
-    //double soilMoist_depVar_summa_frac[],                  
-    //double soilTemp_depVar_summa_K[],
-    //double airTemp_depVar_summa_K,
-    //double sweWatVol_stateVar_summa_m3[],
-    //double canopyWatVol_stateVar_summa_m3,
-    //double soilWatVol_stateVar_summa_m3[],
-    //double aquiferWatVol_stateVar_summa_m3
+    int simtime_mizuroute[],
+    int nRch_2openwq,
+    double REACH_VOL_0[]
     ) {
     
     time_t simtime = OpenWQ_units_ref->convertTime_ints2time_t(
@@ -120,27 +99,10 @@ int CLASSWQ_openwq::openwq_run_time_start(
         simtime_mizuroute[4],
         simtime_mizuroute[5]);
     
-    //int runoff_vol = 0;
-    
-    // Updating Chemistry dependencies and volumes (out of order because of looping)
-
-    // Air Temp is only one layer - NEED TO DOUBLE CHECK
-    //(*OpenWQ_hostModelconfig_ref->dependVar)[1](index_hru,0,0) = airTemp_depVar_summa_K;
-    //(*OpenWQ_hostModelconfig_ref->waterVol_hydromodel)[canopy_index_openwq](index_hru,0,0) = canopyWatVol_stateVar_summa_m3;                   // canopy
-    //(*OpenWQ_hostModelconfig_ref->waterVol_hydromodel)[runoff_index_openwq](index_hru,0,0) = runoff_vol;                  // runoff
-    //(*OpenWQ_hostModelconfig_ref->waterVol_hydromodel)[aquifer_index_openwq](index_hru,0,0) = aquiferWatVol_stateVar_summa_m3;              // aquifer
-
     // update Vars that rely on Snow
-    //for (int z = 0; z < nSnow_2openwq; z++) {
-    //    (*OpenWQ_hostModelconfig_ref->waterVol_hydromodel)[snow_index_openwq](index_hru,0,z) = sweWatVol_stateVar_summa_m3[z];   // snow
-    //}
-    
-    // Update Vars that rely on Soil
-    //for (int z = 0; z < nSoil_2openwq; z++) {
-    //    (*OpenWQ_hostModelconfig_ref->dependVar)[0](index_hru,0,z) = soilMoist_depVar_summa_frac[z]; 
-    //    (*OpenWQ_hostModelconfig_ref->dependVar)[2](index_hru,0,z) = soilTemp_depVar_summa_K[z];
-    //    (*OpenWQ_hostModelconfig_ref->waterVol_hydromodel)[soil_index_openwq](index_hru,0,z) = soilWatVol_stateVar_summa_m3[z];      // soil
-    //}
+    for (int x = 0; x < nRch_2openwq; x++) {
+        (*OpenWQ_hostModelconfig_ref->waterVol_hydromodel)[rivernetwork_nRch_openwq](x,0,0) = REACH_VOL_0[x];   // snow
+    }
 
 
     // *OpenWQ_hostModelconfig_ref.time_step = 5;
@@ -185,6 +147,9 @@ int CLASSWQ_openwq::openwq_run_space(
         simtime_summa[3], 
         simtime_summa[4],
         0);
+
+    // Updating waterVol_hydromodel
+    (*OpenWQ_hostModelconfig_ref->waterVol_hydromodel)[source](ix_s,iy_s,iz_s) = wmass_source;
     
     OpenWQ_couplercalls_ref->RunSpaceStep(
         *OpenWQ_hostModelconfig_ref,
