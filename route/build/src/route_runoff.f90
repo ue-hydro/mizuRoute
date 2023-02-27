@@ -72,7 +72,7 @@ call init_data(ierr, cmessage)
 if(ierr/=0) call handle_err(ierr, cmessage)
 
 ! *****
-! *** openmp - initiate vars
+! *** OPENWQ - initiate vars
 call openwq_init(ierr, cmessage)
 if(ierr/=0) call handle_err(ierr, cmessage)
 ! ************************
@@ -85,7 +85,7 @@ do while (.not.finished)
   call prep_output(ierr, cmessage)
   if(ierr/=0) call handle_err(ierr, cmessage)
 
-  ! openwq: call run_time_start function
+  ! *** OPENWQ: call run_time_start function
   call openwq_run_time_start(openwq_obj)
 
 call system_clock(startTime)
@@ -109,7 +109,7 @@ call system_clock(endTime)
 elapsedTime = real(endTime-startTime, kind(dp))/real(cr)
 write(*,"(A,1PG15.7,A)") '   elapsed-time [output] = ', elapsedTime, ' s'
 
-  ! openwq: call run_time_start function
+  ! *** OPENWQ: call run_time_end function
   call openwq_run_time_end(openwq_obj)
 
   call main_restart(ierr, cmessage)

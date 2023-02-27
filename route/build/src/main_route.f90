@@ -53,6 +53,8 @@ contains
    USE globalData, ONLY: river_basin      ! OMP basin decomposition
    USE globalData, ONLY: nRch             ! number of reaches in the whoel river network
 
+   USE model_finalize,  ONLY : handle_err ! for openwq
+
    implicit none
 
    ! input
@@ -79,6 +81,16 @@ contains
 
   allocate(reachRunoff_local(nRch), stat=ierr)
   if(ierr/=0)then; message=trim(message)//'problem allocating arrays for [reachRunoff_local]'; return; endif
+
+  ! *** OPENWQ
+  ! openwq only linked to routing methods listed below. Otherwise, through msg and abort 
+  ! 1. diffusiveWave
+  ! 2. muskingumCunge
+  
+  if (.not. onRoute(muskingumCunge) .or. .not. onRoute(diffusiveWave)) then
+    ierr = 1
+    call handle_err(ierr, trim(message)//'only the routing methods listed below are supported in the mizuroute-openwq coupling: muskingumCunge (route_opt=4) and diffusiveWave (route_opt=5)')
+  endif
 
   ! 1. subroutine: map basin runoff to river network HRUs
   ! map the basin runoff to the stream network...
@@ -113,7 +125,7 @@ contains
     end do
   end if
 
-  ! openwq space
+  ! *** OPENWQ space in (ewf)
   call openwq_run_space_step_basin_in()
 
   ! 3. subroutine: river reach routing
