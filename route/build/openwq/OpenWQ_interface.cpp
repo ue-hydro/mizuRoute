@@ -20,9 +20,7 @@ int openwq_decl(
     int nRch
     ){            
 
-    return openWQ->decl(
-        nRch
-        );
+    return openWQ->decl(nRch);
 
 }
 
