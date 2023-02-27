@@ -87,7 +87,7 @@ contains
   ! 1. diffusiveWave
   ! 2. muskingumCunge
   
-  if (.not. onRoute(muskingumCunge) .or. .not. onRoute(diffusiveWave)) then
+  if (.not. (onRoute(muskingumCunge) .or. onRoute(diffusiveWave))) then
     ierr = 1
     call handle_err(ierr, trim(message)//'only the routing methods listed below are supported in the mizuroute-openwq coupling: muskingumCunge (route_opt=4) and diffusiveWave (route_opt=5)')
   endif
