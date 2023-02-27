@@ -49,14 +49,14 @@ module openwq
     integer function openwq_run_time_start(   &
       this,                                   &
       simtime,                                &
-      nRch_2openwq,                         &
+      nRch_2openwq,                           &
       REACH_VOL_0)
     
       implicit none
       class(CLASSWQ_openwq)      :: this
       integer(i4b), intent(in)   :: nRch_2openwq
       integer(i4b), intent(in)   :: simtime(6) ! 5 is the number of timevars
-      real(dp),  intent(in)   :: REACH_VOL_0(nRch_2openwq)
+      real(dp),     intent(in)   :: REACH_VOL_0(nRch_2openwq)
 
       openwq_run_time_start = openwq_run_time_start_c(   &
          this%ptr,                                       &
@@ -84,8 +84,8 @@ module openwq
       integer(i4b), intent(in)   :: ix_r
       integer(i4b), intent(in)   :: iy_r
       integer(i4b), intent(in)   :: iz_r
-      real(dp),  intent(in)   :: wflux_s2r
-      real(dp),  intent(in)   :: wmass_source
+      real(dp),     intent(in)   :: wflux_s2r
+      real(dp),     intent(in)   :: wmass_source
 
       openwq_run_space = openwq_run_space_c( &
          this%ptr,                           &
@@ -136,7 +136,5 @@ module openwq
          simtime)
 
    end function
-
-
 
 end module openwq

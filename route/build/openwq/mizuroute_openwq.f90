@@ -23,19 +23,20 @@ module mizuroute_openwq
 ! ####################
 subroutine openwq_init(err, message)
 
-  USE globalData, ONLY:openwq_obj
-  USE globalData, ONLY: nRch             ! number of reaches in the whoel river network
+      USE globalData, ONLY:openwq_obj
+      USE globalData, ONLY: nRch             ! number of reaches in the whoel river network
 
-  implicit none
+      implicit none
 
-  integer(i4b),intent(inout)                      :: err
-  character(*),intent(inout)                      :: message         ! error messgage
+      ! Local variables
+      integer(i4b),intent(inout)    :: err
+      character(*),intent(inout)    :: message 
 
-  openwq_obj = CLASSWQ_openwq() ! initalize openWQ object
+      ! initalize openWQ object
+      openwq_obj = CLASSWQ_openwq() 
 
-  ! intialize openWQ
-  err=openwq_obj%decl(    &
-    nRch)
+      ! Call openwq_init
+      err=openwq_obj%decl(nRch)
   
 end subroutine openwq_init
 
@@ -43,20 +44,19 @@ end subroutine openwq_init
 ! ####################
 ! OpenWQ: run_time_start
 ! ####################
-subroutine openwq_run_time_start(  &
-      openwq_obj)
+subroutine openwq_run_time_start(openwq_obj)
 
-      USE globalData,        ONLY: modTime        ! previous and current model time
-      USE globalData,       ONLY: nRch             ! number of reaches in the whoel river network
+      USE globalData,       ONLY : modTime        ! previous and current model time
+      USE globalData,       ONLY : nRch            ! number of reaches in the whoel river network
       USE globalData,       ONLY : RCHFLX
 
       implicit none
 
-      ! Dummy Varialbes
+      ! Local variables
       class(CLASSWQ_openwq), intent(in)   :: openwq_obj
-      integer(i4b)                         :: iRch
-      integer(i4b)                         :: simtime(6) ! 5 time values yy-mm-dd-hh-min
-      real(dp)                             :: REACH_VOL_0(nRch)
+      integer(i4b)                        :: iRch
+      integer(i4b)                        :: simtime(6) ! 5 time values yy-mm-dd-hh-min
+      real(dp)                            :: REACH_VOL_0(nRch)
       integer(i4b)                        :: err
 
       ! Getting reach volume to update openwq:waterVol_hydromodel
@@ -72,6 +72,7 @@ subroutine openwq_run_time_start(  &
       simtime(5) = modTime(1)%minute()
       simtime(6) = modTime(1)%sec()
 
+      ! Call openwq_run_time_start
       err=openwq_obj%openwq_run_time_start(     &
       simtime,                                  &
       nRch,                                     &
@@ -91,6 +92,7 @@ subroutine openwq_run_space_step_basin_in()
 
       implicit none
 
+      ! Local variables
       integer(i4b)                           :: iRch      ! variable needed for looping through reaches
       integer(i4b)                           :: simtime(6) ! 5 time values yy-mm-dd-hh-min
       real(dp)                               :: mizuroute_timestep
@@ -117,6 +119,7 @@ subroutine openwq_run_space_step_basin_in()
       simtime(5) = modTime(1)%minute()
       simtime(6) = modTime(1)%sec()
 
+      ! Mizuroute is 1D
       iy_r_openwq = 1
       iz_r_openwq = 1 
 
@@ -142,58 +145,55 @@ subroutine openwq_run_space_step_basin_in()
             flux_m3_sec = RCHFLX(1,iRch)%BASIN_QR(0) 
             flux_m3_timestep = flux_m3_sec * mizuroute_timestep
             ! *Call openwq_run_space_in* if wflux_s2r not 0
-            err=openwq_obj%openwq_run_space_in(          &
-            simtime,                                     &
-            'SUMMA_RUNOFF',                              &
-            index_r_openwq, ix_r_openwq, iy_r_openwq, iz_r_openwq,  &
+            err=openwq_obj%openwq_run_space_in(                    &
+            simtime,                                               &
+            'SUMMA_RUNOFF',                                        &
+            index_r_openwq, ix_r_openwq, iy_r_openwq, iz_r_openwq, &
             flux_m3_timestep)
       end do
 
-      
 end subroutine openwq_run_space_step_basin_in
 
 ! OpenWQ space (wihtin mizuroute)
-subroutine openwq_run_space_step(segIndex,                            & ! index
-                                    REACH_VOL_segIndex,               & ! Volume
-                                    Qlocal_in,                        & ! flow in
-                                    Qlocal_out)                        ! flow out
+subroutine openwq_run_space_step(segIndex,      & ! index
+      REACH_VOL_segIndex,                       & ! Volume
+      Qlocal_in,                                & ! flow in
+      Qlocal_out)                                 ! flow out
 
-      USE globalData,   only: openwq_obj
-      USE globalData,       ONLY: modTime        ! previous and current model time
+      USE globalData,       ONLY : openwq_obj
+      USE globalData,       ONLY : modTime       
       USE globalData,       ONLY : nRch
-      USE globalData,       only : NETOPO
-      USE globalData,       only : RCHFLX
-      USE globalData,       only : TSEC
+      USE globalData,       ONLY : NETOPO
+      USE globalData,       ONLY : RCHFLX
+      USE globalData,       ONLY : TSEC
 
       implicit none
 
-      integer(i4b)                           :: iRch      ! variable needed for looping through reaches
-      integer(i4b)                           :: simtime(6) ! 5 time values yy-mm-dd-hh-min
-      real(dp)                               :: mizuroute_timestep
-      integer(i4b)                           :: err
+      ! Local variables
+      integer(i4b)       :: iRch                      ! variable needed for looping through reaches
+      integer(i4b)       :: simtime(6)                ! 5 time values yy-mm-dd-hh-min
+      real(dp)           :: mizuroute_timestep
+      integer(i4b)       :: err
+      integer(i4b)       :: segIndex                  ! index
+      real(dp)           :: REACH_VOL_segIndex        ! Volume
+      real(dp)           :: Qlocal_in                 ! flow in
+      real(dp)           :: Qlocal_out                ! flow out
+      integer(i4b)       :: river_network_reaches = 0
+      integer(i4b)       :: index_s_openwq
+      integer(i4b)       :: index_r_openwq
+      integer(i4b)       :: ix_s_openwq
+      integer(i4b)       :: ix_r_openwq
+      integer(i4b)       :: iy_s_openwq
+      integer(i4b)       :: iy_r_openwq
+      integer(i4b)       :: iz_s_openwq
+      integer(i4b)       :: iz_r_openwq
+      real(dp)           :: wflux_s2r_openwq
+      real(dp)           :: wmass_source_openwq
+      real(dp)           :: compt_vol_m3
+      real(dp)           :: flux_m3_sec
+      real(dp)           :: flux_m3_timestep
 
-      integer(i4b) :: segIndex                  ! index
-      real(dp) :: REACH_VOL_segIndex            ! Volume
-      real(dp) :: Qlocal_in                     ! flow in
-      real(dp) :: Qlocal_out                    ! flow out
-
-      ! compartment indexes in OpenWQ (defined in the hydrolink)
-      integer(i4b)                           :: river_network_reaches    = 0
-      integer(i4b)                           :: index_s_openwq
-      integer(i4b)                           :: index_r_openwq
-      integer(i4b)                           :: ix_s_openwq
-      integer(i4b)                           :: ix_r_openwq
-      integer(i4b)                           :: iy_s_openwq
-      integer(i4b)                           :: iy_r_openwq
-      integer(i4b)                           :: iz_s_openwq
-      integer(i4b)                           :: iz_r_openwq
-      real(dp)                               :: wflux_s2r_openwq
-      real(dp)                               :: wmass_source_openwq
-      real(dp)                               :: compt_vol_m3
-      real(dp)                               :: flux_m3_sec
-      real(dp)                               :: flux_m3_timestep
-
-
+      ! Get time from mizuroute
       simtime(1) = modTime(1)%year()
       simtime(2) = modTime(1)%month()
       simtime(3) = modTime(1)%day()
@@ -234,10 +234,10 @@ subroutine openwq_run_space_step(segIndex,                            & ! index
       wflux_s2r_openwq = flux_m3_timestep
       ! *Call openwq_run_space* if wflux_s2r_openwq not 0
       err=openwq_obj%openwq_run_space(                          &
-      simtime,                                                &
-      index_s_openwq, ix_s_openwq, iy_s_openwq, iz_s_openwq,  &
-      index_r_openwq, ix_r_openwq, iy_r_openwq, iz_r_openwq,  &
-      wflux_s2r_openwq,                                       &
+      simtime,                                                  &
+      index_s_openwq, ix_s_openwq, iy_s_openwq, iz_s_openwq,    &
+      index_r_openwq, ix_r_openwq, iy_r_openwq, iz_r_openwq,    &
+      wflux_s2r_openwq,                                         &
       wmass_source_openwq)
 
 end subroutine openwq_run_space_step
@@ -246,19 +246,15 @@ end subroutine openwq_run_space_step
 ! ####################
 ! OpenWQ: run_time_end
 ! ####################
-subroutine openwq_run_time_end( &
-  openwq_obj)
+subroutine openwq_run_time_end(openwq_obj)
 
-      USE globalData,        ONLY: modTime        ! previous and current model time
-
+      USE globalData,        ONLY: modTime             ! previous and current model time
       implicit none
-
-      ! Dummy Varialbes
       class(CLASSWQ_openwq), intent(in)  :: openwq_obj
 
       ! Local Variables
       integer(i4b)                       :: simtime(6) ! 5 time values yy-mm-dd-hh-min
-      integer(i4b)                       :: err ! error control
+      integer(i4b)                       :: err        ! error control
 
       ! Get time
       simtime(1) = modTime(1)%year()
@@ -268,8 +264,8 @@ subroutine openwq_run_time_end( &
       simtime(5) = modTime(1)%minute()
       simtime(6) = modTime(1)%sec()
 
-      err=openwq_obj%openwq_run_time_end(simtime)           ! minute
-
+      ! Call openwq_run_time_end
+      err=openwq_obj%openwq_run_time_end(simtime)
 
 end subroutine openwq_run_time_end
 
