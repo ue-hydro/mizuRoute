@@ -22,6 +22,12 @@ USE write_simoutput,     only : output           !
 USE write_restart,       only : main_restart     ! write netcdf restart file
 USE model_finalize,      ONLY : finalize
 USE model_finalize,      ONLY : handle_err
+! OpenWQ coupling 
+USE globalData,         ONLY : openwq_obj
+USE mizuroute_openwq,   ONLY : openwq_init
+USE mizuroute_openwq,   ONLY : openwq_run_time_start
+USE mizuroute_openwq,   ONLY : openwq_run_time_end
+USE, intrinsic :: iso_c_binding
 
 implicit none
 
@@ -65,6 +71,12 @@ if(ierr/=0) call handle_err(ierr, cmessage)
 call init_data(ierr, cmessage)
 if(ierr/=0) call handle_err(ierr, cmessage)
 
+! *****
+! *** OPENWQ - initiate vars
+call openwq_init(ierr, cmessage)
+if(ierr/=0) call handle_err(ierr, cmessage)
+! ************************
+
 ! ***********************************
 ! start of time-stepping simulation
 ! ***********************************
@@ -72,6 +84,9 @@ do while (.not.finished)
 
   call prep_output(ierr, cmessage)
   if(ierr/=0) call handle_err(ierr, cmessage)
+
+  ! *** OPENWQ: call run_time_start function
+  call openwq_run_time_start(openwq_obj)
 
 call system_clock(startTime)
   call get_hru_runoff(ierr, cmessage)
@@ -93,6 +108,9 @@ call system_clock(startTime)
 call system_clock(endTime)
 elapsedTime = real(endTime-startTime, kind(dp))/real(cr)
 write(*,"(A,1PG15.7,A)") '   elapsed-time [output] = ', elapsedTime, ' s'
+
+  ! *** OPENWQ: call run_time_end function
+  call openwq_run_time_end(openwq_obj)
 
   call main_restart(ierr, cmessage)
   if(ierr/=0) call handle_err(ierr, cmessage)

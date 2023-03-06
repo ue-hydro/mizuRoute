@@ -10,13 +10,13 @@
 # User configure part
 #========================================================================
 # Define fortran compiler - gnu, intel or pgi
-FC  =
+FC  = gnu
 
 # Define the compiler exe, e.g., gnu=>gfortran, intel=>ifort, pgi=>pgf90
-FC_EXE =
+FC_EXE = gfortran
 
 # Define the executable
-EXE =
+EXE = mizuRoute
 
 # Define optional setting
 # fast:      Enables optimizations
@@ -25,16 +25,16 @@ EXE =
 MODE = debug
 
 # define open MP option (put yes to activate OMP)
-isOpenMP =
+isOpenMP = "yes"
 
 # Define core directory below which everything resides
 # parent directory of the 'build' directory
 # do not put space at the end of path
-F_MASTER =
+F_MASTER = "/code/mizuRoute/route/"
 
 # Define the NetCDF libraries and path to include files
 ifeq "$(FC)" "gnu"
- NCDF_PATH =
+ NCDF_PATH = "/usr"
 else ifeq "$(FC)" "intel"
  NCDF_PATH =
 else ifeq "$(FC)" "pgi"

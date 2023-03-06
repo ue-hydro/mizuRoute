@@ -12,6 +12,8 @@ USE irf_route_module,    only : irf_route                  ! unit hydrograph (im
 USE dfw_route_module,    only : dfw_route                  ! diffusive wave routing method
 USE kw_route_module,     only : kw_route                   ! kinematic wave routing method
 USE mc_route_module,     only : mc_route                   ! muskingum-cunge routing method
+! openwq
+USE mizuroute_openwq,   only : openwq_run_space_step_basin_in
 
 implicit none
 
@@ -51,6 +53,8 @@ contains
    USE globalData, ONLY: river_basin      ! OMP basin decomposition
    USE globalData, ONLY: nRch             ! number of reaches in the whoel river network
 
+   USE model_finalize,  ONLY : handle_err ! for openwq
+
    implicit none
 
    ! input
@@ -77,6 +81,16 @@ contains
 
   allocate(reachRunoff_local(nRch), stat=ierr)
   if(ierr/=0)then; message=trim(message)//'problem allocating arrays for [reachRunoff_local]'; return; endif
+
+  ! *** OPENWQ
+  ! openwq only linked to routing methods listed below. Otherwise, through msg and abort 
+  ! 1. diffusiveWave
+  ! 2. muskingumCunge
+  
+  if (.not. (onRoute(muskingumCunge) .or. onRoute(diffusiveWave))) then
+    ierr = 1
+    call handle_err(ierr, trim(message)//'only the routing methods listed below are supported in the mizuroute-openwq coupling: muskingumCunge (route_opt=4) and diffusiveWave (route_opt=5)')
+  endif
 
   ! 1. subroutine: map basin runoff to river network HRUs
   ! map the basin runoff to the stream network...
@@ -110,6 +124,9 @@ contains
     RCHFLX(iens,iSeg)%BASIN_QR(1) = reachRunoff_local(iSeg)         ! streamflow (m3/s)
     end do
   end if
+
+  ! *** OPENWQ space in (ewf)
+  call openwq_run_space_step_basin_in()
 
   ! 3. subroutine: river reach routing
   if (onRoute(accumRunoff)) then
@@ -208,6 +225,7 @@ contains
     elapsedTime = real(endTime-startTime, kind(dp))/real(cr)
     write(*,"(A,1PG15.7,A)") '      elapsed-time [dfw_route] = ', elapsedTime, ' s'
   endif
+
 
  end subroutine main_route
 

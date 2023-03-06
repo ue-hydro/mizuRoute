@@ -33,6 +33,7 @@ cime
 libraries
 lib
 manage_externals
+openwq/openwq
 
 # other files
 *.local

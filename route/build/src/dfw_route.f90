@@ -16,6 +16,8 @@ USE globalData,  ONLY: idxDW
 ! subroutines: general
 USE model_finalize, ONLY : handle_err
 
+USE mizuroute_openwq,   only:openwq_run_space_step
+
 ! privary
 implicit none
 private
@@ -172,7 +174,7 @@ CONTAINS
  end if
 
  ! get discharge coming from upstream
- nUps = size(NETOPO_in(segIndex)%UREACHI)
+ nUps = count(NETOPO_in(segIndex)%goodBas)
  isHW = .true.
  q_upstream = 0.0_dp
  if (nUps>0) then
@@ -195,7 +197,8 @@ CONTAINS
  endif
 
  ! solve diffusive wave equation
- call diffusive_wave(RPARAM_in(segIndex),                &  ! input: parameter at segIndex reach
+ call diffusive_wave(segIndex,                           &  ! input <openwq>: needed to run run_space
+                     RPARAM_in(segIndex),                &  ! input: parameter at segIndex reach
                      T0,T1,                              &  ! input: start and end of the time step
                      q_upstream,                         &  ! input: total discharge at top of the reach being processed
                      isHW,                               &  ! input: is this headwater basin?
@@ -218,7 +221,8 @@ CONTAINS
  ! *********************************************************************
  ! subroutine: solve diffuisve wave equation
  ! *********************************************************************
- SUBROUTINE diffusive_wave(rch_param,     & ! input: river parameter data structure
+ SUBROUTINE diffusive_wave(segIndex,      & ! input <openwq>: needed to run run_space
+                           rch_param,     & ! input: river parameter data structure
                            T0,T1,         & ! input: start and end of the time step
                            q_upstream,    & ! input: discharge from upstream
                            isHW,          & ! input: is this headwater basin?
@@ -294,6 +298,8 @@ CONTAINS
  ! Local parameters
  integer(i4b), parameter         :: absorbingBC=1
  integer(i4b), parameter         :: neumannBC=2
+
+ integer(i4b) :: segIndex
 
  ierr=0; message='diffusive_wave/'
 
@@ -405,6 +411,7 @@ CONTAINS
      end if
 
      Qlocal(0,:) = Qlocal(1,:)
+
    end do
 
    ! store final outflow in data structure
@@ -427,6 +434,13 @@ CONTAINS
 
    ! update state
    rstate%molecule%Q = Qlocal(1,:)
+
+   ! openwq space
+   call openwq_run_space_step(segIndex,   & ! index_openwq
+      rflux%ROUTE(idxDW)%REACH_VOL(0),    & ! Volume (source)
+      Qlocal(1,1)*dT,                     & ! flow in
+      Qlocal(1,nMolecule%DW_ROUTE)*dT)      ! flow out
+
 
  else ! if head-water
 

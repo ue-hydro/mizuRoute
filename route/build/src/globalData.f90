@@ -58,7 +58,7 @@ MODULE globalData
   USE var_lookup, ONLY : nVarsKW       ! number of variables for data structure
   USE var_lookup, ONLY : nVarsDW       ! number of variables for data structure
   USE var_lookup, ONLY : nVarsMC       ! number of variables for data structure
-
+  USE openWQ,     ONLY : CLASSWQ_openwq! OpenWQ interface
   implicit none
 
   save
@@ -164,5 +164,8 @@ MODULE globalData
   ! miscellaneous
   integer(i4b)                   , public :: ixPrint=integerMissing   ! index of desired reach to be on-screen print
   type(cMolecule)                , public :: nMolecule                ! number of computational molecule (used for KW, MC, DW)
+
+  ! openwq variable
+  type(CLASSWQ_openwq),save,public            :: openwq_obj
 
 end module globalData
