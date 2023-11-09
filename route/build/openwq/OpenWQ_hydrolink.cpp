@@ -63,7 +63,6 @@ int CLASSWQ_openwq::decl(
 
         // Master Json
         try {
-            struct stat sb; // struct to hold meta data for for the json file.
             if (!std::getenv("master_json")){   // check if the 'master_json' envirpment variable exists
                 throw std::runtime_error("ERROR: The OpenWQ Masterfile path must be set as a enviroment variable called 'master_json'.  This variable has not been set.");
                 // export master_json="/code/synthetic_tests/1_Athabasca_River_remapped/mizuroute/openWQ_master.json"
