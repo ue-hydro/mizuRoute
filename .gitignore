@@ -40,3 +40,5 @@ openwq/openwq
 *bak*
 *tmp*
 
+# openWQ files
+route/build/build_openwq/_build/
